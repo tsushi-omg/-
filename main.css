@@ -1,0 +1,216 @@
+body{
+    /* background-image: url("https://cdn.pixabay.com/photo/2018/04/05/14/09/sunflowers-3292932_960_720.jpg"); */
+    background-color: rgb(32, 32, 32);
+}
+
+/* スクロールバー */
+::-webkit-scrollbar {
+    width: 8px; /* スクロールバーの幅 */
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #1a1a1a; /* トラックの背景色 */
+    border-radius: 4px; /* 丸みを帯びた角 */
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: #555; /* スクロールバーの色 */
+    border-radius: 4px;
+    border: 1px solid #333; /* スクロールバーの縁 */
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #888; /* ホバー時の色 */
+  }  
+
+/* ファイルディレクトリエリア */
+#directoryArea{
+    left: 0%;
+    top: 0%;
+    width: 31vw;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.2);
+    position: absolute;
+}
+
+.absolute{
+    position: absolute !important;
+}
+
+/* メインディレクトリ */
+#folderDirectory{
+    width: 90%;
+    height: 85%;
+    left: 2%;
+    top: 10%;
+    overflow-y: auto;
+    overflow-x: auto;
+    white-space: nowrap; /* 横スクロール対応 */
+    
+}
+
+
+/* テキストボックス */
+.textbox1{
+    background-color: rgba(0, 0, 0, 0.5);
+    /* border: none; */
+    border-radius: 10px;
+    outline: none !important;
+    color: white;
+}
+
+.textbox2{/* 下線のみ */
+    background-color: transparent;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    border-color: rgb(236, 236, 236);
+    color: white;
+    outline: none !important;
+}
+
+/* ボタン */
+.button{}
+
+.buttonOn{
+    /* background-color: rgb(0, 255, 255, 0.3); */
+    background-color: rgb(0, 0, 0, 0.5);
+    border-radius: 10px;
+}
+
+.button:hover{
+    /* background-color: rgb(0, 255, 255, 0.3); */
+    background-color: rgb(0, 0, 0, 0.5);
+    cursor: pointer;
+    color: white;
+    border-radius: 10px;
+}
+
+.button1{
+    background-color: rgba(255, 255, 255, 0.5);
+    color: black;
+    outline: none !important;
+    user-select: none;
+    border-radius: 10px;
+}
+
+.button1:hover{
+    /* background-color: rgb(0, 255, 255, 0.3); */
+    background-color: rgb(0, 0, 0, 0.5);
+    cursor: pointer;
+    color: white;
+}
+
+/* フォルダアイコン */
+
+.isFolder{
+    color: white;
+    background-color: transparent;
+    outline: none !important;
+    border: none;
+    /* font-weight: bold; */
+    border-radius: 10px;
+}
+
+.isFolder:hover{
+    text-decoration: underline;
+}
+
+/* ファイルアイコン */
+.isFile{
+    color: white;
+    background-color: transparent;
+    outline: none !important;
+    border: none;
+}
+
+.isFile:hover{
+    text-decoration: underline;
+}
+
+.openFile{
+    background-color: rgba(0, 255, 255,0.2);
+    /* font-weight: bold; */
+    text-decoration: underline;
+    /* border-radius: 10px; */
+}
+
+/* 子要素ボタンアイコン */
+
+.buttonChild{
+    border: none;
+    background-color: rgba(133, 133, 133, 0.5);
+    outline: none !important;
+    user-select: none !important;
+    border-radius: 10px;
+}
+
+/* パスラベル */
+.isPathLabel{
+    color: rgb(175, 175, 175);
+    /* text-decoration: underline; */
+}
+
+
+/* メモエリア */
+
+#memoArea{
+    left: 31%;
+    top: 0%;
+    width: 69vw;
+    height: 100vh;
+    background-color: rgb(255, 255, 255,0.7);
+}
+
+#memoTexrarea{
+    /* background-color: rgba(0, 0, 0, 0.8); */
+    background-color: transparent;
+    left: 2%;
+    top: 7%;
+    width: 96%;
+    height: 87%;
+    outline: none;
+    resize: none;
+    color: black;
+    border: none;
+}
+
+/* 透明レイヤー */
+#layer{
+    background-color: rgba(0, 0, 0,0.7);
+    z-index: 100;
+    position: absolute;
+    left: 0%;
+    top: 0%;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* サイドメニュー */
+#sideMenu{
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 31vw;
+    height: 100vh;
+    background-color: black;
+}
+
+
+#dataryoiki{
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

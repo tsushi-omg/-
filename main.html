@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ドキュメントくん</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="main.css" rel="stylesheet">
+    <script src="main.js"></script>
+</head>
+<body>
+    <!-- フォルダディレクトリ -->
+     <div id="directoryArea">
+        <!-- ヘッダーボタンエリア -->
+        <div>
+            <!-- 新規フォルダボタン -->
+            <svg id="newFolderButton" class="absolute button" style="top:2%; left:90%" onclick="switchFolderMode()" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M560-320h80v-80h80v-80h-80v-80h-80v80h-80v80h80v80ZM160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Z"/></svg>
+            <!-- フォルダ名 -->
+            <div id="newFolderArea" class="absolute" style="top: 1.5%; left: 4%;" hidden>
+                <input id="newFolderTextbox" type="input" class="textbox1 ml-4" style="width: 300px;" placeholder="新規フォルダ名" autocomplete="off">
+                <button id="createNewFolderExeButton" class="button button1" onclick="BeforeCreateFolderFunction()">作成</button>
+            </div>
+            <!-- 検索 -->
+            <div class="absolute" style="top: 1.5%; left: 4%;">
+                <input id="searchTextbox" type="input" class="textbox2 ml-4" style="width: 300px;" placeholder="検索" autocomplete="off">
+            </div>
+            <!-- メニューボタン -->
+            <svg onclick="openMenu()" class="mt-3 ml-2 button" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg>
+            <!-- フォルダディレクトリ　メイン -->
+            <div id="folderDirectory" class="absolute"></div>
+
+        </div>
+        <!-- ？ -->
+        <div class="absolute" style="left: 88%; top: 92%;">
+            <svg xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px" fill="#e8eaed">
+                <!-- 黒塗りつぶしの円 -->
+                <circle cx="480" cy="-480" r="480" fill="rgb(77,77,77)" />
+                <path d="M478-240q21 0 35.5-14.5T528-290q0-21-14.5-35.5T478-340q-21 0-35.5 14.5T428-290q0 21 14.5 35.5T478-240Zm-36-154h74q0-33 7.5-52t42.5-52q26-26 41-49.5t15-56.5q0-56-41-86t-97-30q-57 0-92.5 30T342-618l66 26q5-18 22.5-39t53.5-21q32 0 48 17.5t16 38.5q0 20-12 37.5T506-526q-44 39-54 59t-10 73Zm38 314q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
+            </svg>
+        </div>
+
+     </div>
+
+     <!-- メモ帳エリア　未インポート -->
+    <div id="memoArea" class="absolute">
+        <textarea id="memoTexrarea" spellcheck="false" class="absolute">ファイル未選択</textarea>
+
+        <!-- ヘッダー領域 -->
+        <div class="absolute" style="left: 2%; top: 2%; width: 90%;">
+        <!-- ファイル名表示 -->
+        <input type="text" class="textbox2" style="color: black; border-color: black; width: 20%; font-weight: bold;" id="fileNameText">
+        <svg class="button" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="rgba(0,0,0,0.6)"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>
+        <!-- パス表示 -->
+        <label class="absolute" style="left: 26%; color: rgba(0, 0, 0, 0.5);" id="pathLabel"></label>
+        <!-- 削除ボタン -->
+        <!-- <button class="button1 absolute" style="left: 90%; top: 2%;">削除</button> -->
+        </div>
+
+        <!-- フッター領域 -->
+        <div class="absolute" style="left: 80%; top: 95%; width: 20%; background-color: rgb(156, 156, 156);">
+            <label style="color: black;">最終更新日：</label><label id="updateLabel"></label>
+        </div>
+    </div>
+
+    <!-- サイドメニューエリア -->
+    <div id="sideMenu" style="z-index: 110;" hidden>
+        <label class="mt-4 ml-2" style="color: white; font-weight: bold; background-color: rgb(68, 68, 68);">m e n u</label>
+        <!-- データ領域 -->
+        <div class="mt-4 ml-2" >
+        <label style="color: white;">データ領域</label><textarea id="dataryoiki"></textarea>
+        </div>
+    </div>
+
+    <!-- 透明レイヤー -->
+    <div id="layer" onclick="closeMenu()" hidden></div>
+
+
+
+
+
+
+
+</body>
+</html>
