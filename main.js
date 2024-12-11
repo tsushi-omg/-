@@ -356,15 +356,27 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
             div.style.marginLeft="20px";
 
             //子要素再構築
+            // if(isConstruct){
+            //     //直下の子要素を取得
+            //     const childArray = Object.values(mainData).filter(item => item.parentID == constructorID);
+            //     for(let i = 0; i < childArray.length; i++){
+            //         if(childArray[i].type=="フォルダ"){
+            //             createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"folder",emptyLabel,folder,idParam,false,true,childArray[i].id,childArray[i].name);
+            //         }else if(childArray[i].type=="ファイル"){
+            //             createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"file",emptyLabel,folder,idParam,false,true,childArray[i].id,childArray[i].name);
+            //         }
+            //     }
+            // }
+
             if(isConstruct){
                 //直下の子要素を取得
-                const childArray = Object.values(mainData).filter(item => item.parentID == constructorID);
-                for(let i = 0; i < childArray.length; i++){
-                    if(childArray[i].type=="フォルダ"){
-                        createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"folder",emptyLabel,folder,idParam,false,true,childArray[i].id,childArray[i].name);
-                    }else if(childArray[i].type=="ファイル"){
-                        createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"file",emptyLabel,folder,idParam,false,true,childArray[i].id,childArray[i].name);
-                    }
+                const folderArray = Object.values(mainData).filter(item => (item.parentID == constructorID) && (item.type=="フォルダ"));
+                for(let i = 0; i < folderArray.length; i++){
+                    createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"folder",emptyLabel,folder,idParam,false,true,folderArray[i].id,folderArray[i].name);
+                }
+                const fileArray = Object.values(mainData).filter(item => (item.parentID == constructorID) && (item.type=="ファイル"));
+                for(let i = 0; i < fileArray.length; i++){
+                    createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"file",emptyLabel,folder,idParam,false,true,fileArray[i].id,fileArray[i].name);
                 }
             }
 
