@@ -22,7 +22,10 @@
             </div>
             <!-- 検索 -->
             <div class="absolute" style="top: 1.5%; left: 4%;">
-                <input id="searchTextbox" type="input" class="textbox2 ml-4" style="width: 300px;" placeholder="検索" autocomplete="off">
+                <div>
+                <input id="searchTextbox" type="input" class="textbox2 ml-4" style="width: 300px;" placeholder="ドキュメント内容を検索" autocomplete="off"></div>
+                <!-- 検索結果 -->
+                <div id="searchResultArea" class="ml-4"></div>
             </div>
             <!-- メニューボタン -->
             <svg onclick="openMenu()" class="mt-3 ml-2 button" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg>
@@ -73,8 +76,6 @@
 
     <!-- 透明レイヤー -->
     <div id="layer" onclick="closeMenu()" hidden></div>
-
-
 
 
 

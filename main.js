@@ -3,8 +3,9 @@
 document.addEventListener('DOMContentLoaded',()=>{
     hensu();
     roadStrage();
+    setSavedID();
     startEventListen();
-    constructAll()
+    constructAll();
 
 })
 
@@ -23,6 +24,7 @@ var fileNameText;
 var sideMenu;
 var layer;
 var dataryoiki;
+var searchResultArea;
 
 // 要素import
 function hensu(){
@@ -39,6 +41,7 @@ function hensu(){
     sideMenu = document.getElementById('sideMenu');
     layer = document.getElementById('layer');
     dataryoiki = document.getElementById('dataryoiki');
+    searchResultArea = document.getElementById('searchResultArea');
 
 
 }
@@ -181,13 +184,54 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
 
                 //右クリックイベント（新規作成）
                 folder.addEventListener('contextmenu',function(event){
-
                     // //デフォルトの右クリックイベントを無効
                     event.preventDefault();
-
+                    folder.style.opacity="0.3";
+                    deleteButton.hidden=false;
+                    deleteLayer.hidden=false;
                 })
 
                 div.appendChild(folder);
+
+                //削除ボタン
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent="⚠削除";
+                deleteButton.style.position="absolute";
+                deleteButton.hidden=true;
+                deleteButton.style.zIndex=120;
+                deleteButton.classList.add('deleteButton');
+                deleteButton.style.backgroundColor="rgba(219, 101, 101, 0.8)";
+                deleteButton.style.color="white";
+                deleteButton.addEventListener('click',function(event){
+                    //画面から削除
+                    for(let element of div.children){
+                        element.remove();
+                        try{//このidがあれば実行　※なければエラーになるため。ない場合＝folder、file以外のid
+                        mainData[element.id].type="deleted";
+                        }catch(error){}
+                    }
+                    div.remove();//※自分から消すと子要素が参照できなくなる
+                    mainData[folder.id].type="deleted";
+                    savaStrage();//--ok!
+                });
+                div.appendChild(deleteButton);
+
+                //削除時用レイヤー
+                const deleteLayer = document.createElement('div');
+                deleteLayer.style.backgroundColor="transparent";
+                deleteLayer.style.position="absolute";
+                deleteLayer.style.width="100vw";
+                deleteLayer.style.height="100vh";
+                deleteLayer.style.left="0%";
+                deleteLayer.style.top="0%";
+                deleteLayer.style.zIndex=100;
+                deleteLayer.hidden=true;
+                deleteLayer.addEventListener('click',function(event){
+                    deleteButton.hidden=true;
+                    deleteLayer.hidden=true;
+                    folder.style.opacity="1.0";
+                });
+                document.body.appendChild(deleteLayer);
 
                 //新規作成　出現ボタン
                 const plusButton = document.createElement('button');
@@ -450,19 +494,62 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                     updateLabel.textContent=mainData[currentFileID].updateAt;
                     pathLabel.textContent=mainData[currentFileID].path;
                     //選択用クラス除去
-                    for(let element of document.getElementsByClassName('openFile')){
+                    for(let element of Array.from(document.getElementsByClassName('openFile'))){
                         element.classList.remove('openFile');
                     }
                     //選択用クラス自分に付与
                     file.classList.add('openFile');
+                    //親フォルダにクラス付与
+                    parentFolder.classList.add('openFile');
+
+                    memoTexrarea.focus();
 
                 })
     
-                //右クリックイベント
+                //右クリックイベント（新規作成）
                 file.addEventListener('contextmenu',function(event){
-                    //デフォルトの右クリックイベントを無効
+                    // //デフォルトの右クリックイベントを無効
                     event.preventDefault();
+                    file.style.opacity="0.3";
+                    deleteButton.hidden=false;
+                    deleteLayer.hidden=false;
                 })
+
+                //削除ボタン
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent="⚠削除";
+                deleteButton.style.position="absolute";
+                deleteButton.style.left="15%";
+                deleteButton.hidden=true;
+                deleteButton.style.zIndex=120;
+                deleteButton.classList.add('deleteButton');
+                deleteButton.style.backgroundColor="rgba(219, 101, 101, 0.8)";
+                deleteButton.style.color="white";
+                deleteButton.addEventListener('click',function(event){
+                    //画面から削除
+                    div.remove();//※自分から消すと子要素が参照できなくなる
+                    mainData[file.id].type="deleted";
+                    savaStrage();//--ok!
+                });
+                div.appendChild(deleteButton);
+
+                //削除時用レイヤー
+                const deleteLayer = document.createElement('div');
+                deleteLayer.style.backgroundColor="transparent";
+                deleteLayer.style.position="absolute";
+                deleteLayer.style.width="100vw";
+                deleteLayer.style.height="100vh";
+                deleteLayer.style.left="0%";
+                deleteLayer.style.top="0%";
+                deleteLayer.style.zIndex=100;
+                deleteLayer.hidden=true;
+                deleteLayer.addEventListener('click',function(event){
+                    deleteButton.hidden=true;
+                    deleteLayer.hidden=true;
+                    file.style.opacity="1.0";
+                });
+                document.body.appendChild(deleteLayer);
+
     
                 div.appendChild(file);
     
@@ -552,7 +639,7 @@ function roadStrage(){
 // データを基に画面構築***********************************************************************
 function constructAll(){
     //先頭フォルダを取得（構築）
-    let topFolderArray = Object.values(mainData).filter(item => item.top===true);
+    let topFolderArray = Object.values(mainData).filter(item => (item.top===true) && (item.type!="deleted"));
     for(let i = 0; i < topFolderArray.length; i++){//先頭フォルダの数だけ繰り返し
         //固有の先頭フォルダ
         const topFolder = topFolderArray[i];
@@ -592,6 +679,75 @@ function startEventListen(){
     // dataryoiki.addEventListener('input',function(event){
     //     savaStrage();
     // })
+
+    //検索ボックス
+    searchTextbox.addEventListener('input',function(event){
+
+        //ボタンリセット
+        for(let element of Array.from(document.getElementsByClassName('searchresultButton'))){
+            element.remove();
+        }
+
+        //idボックスを参照
+        //TODO　削除済み考慮する必要あり
+        for(let element of Array.from(idArray)){
+            try{
+                if(((mainData[element].memo).indexOf(searchTextbox.value) != -1) && (mainData[element].type=="ファイル")){
+
+                    //親div
+                    const div = document.createElement('div');
+                    div.classList.add('searchresultButton');
+                    searchResultArea.appendChild(div);
+
+                    //ボタン
+                    const button = document.createElement('button');
+                    button.textContent=`📄${mainData[element].name}`;
+                    button.classList.add('searchresultButton');
+                    button.classList.add('isFile');
+
+                    //クリックイベント
+                    button.addEventListener('click',function(event){
+                        //操作中要素に設定
+                        currentElementID=element;
+                        currentFileID=element;
+                        //ドキュメントエリアに反映（ドキュメント、ファイル名、更新日、パス）
+                        memoTexrarea.value=mainData[currentFileID].memo;
+                        fileNameText.value=mainData[currentFileID].name;
+                        updateLabel.textContent=mainData[currentFileID].updateAt;
+                        pathLabel.textContent=mainData[currentFileID].path;
+                        //選択用クラス除去
+                        for(let element of Array.from(document.getElementsByClassName('openFile'))){
+                            element.classList.remove('openFile');
+                        }
+                        //選択用クラス自分に付与
+                        document.getElementById(element).classList.add('openFile');
+                        //親フォルダにクラス付与
+                        document.getElementById(mainData[element].parentID).classList.add('openFile');
+                        memoTexrarea.focus();
+                    })
+
+                    div.appendChild(button);
+
+                    //パス
+                    const path = document.createElement('label');
+                    path.textContent=mainData[element].path;
+                    path.classList.add('isPathLabel');
+                    path.classList.add('searchresultButton');
+                    path.classList.add('ml-2');
+                    div.appendChild(path);
+
+                }
+            }catch(error){}
+        }
+
+        //空文字なら削除（全件ヒットしてしまうため）
+        if(searchTextbox.value==""){
+            //ボタン削除
+            for(let element of Array.from(document.getElementsByClassName('searchresultButton'))){
+                element.remove();
+            }
+        }
+    })
 }
 
 
@@ -621,9 +777,20 @@ function splitComma(text) {
     return array;
 }
 
+
+//保存済みidを格納
+function setSavedID(){
+    //idArrayに保存データのidを格納
+    const saveData = Object.values(mainData);
+    for(let element of saveData){
+        idArray.push(element.id);
+    }
+}
+
 //７桁ID生成　重複ナシ
 let idArray=[];
 function randomID() {
+
     // 1000000 以上 9999999 以下の乱数を生成
     var id = Math.floor(1000000 + Math.random() * 9000000);
 

@@ -132,7 +132,7 @@ body{
     background-color: rgba(0, 255, 255,0.2);
     /* font-weight: bold; */
     text-decoration: underline;
-    /* border-radius: 10px; */
+    border-radius: 10px;
 }
 
 /* 子要素ボタンアイコン */
@@ -186,6 +186,16 @@ body{
     height: 100vh;
 }
 
+#layerForDelete{
+    background-color: rgba(0, 0, 0,0.7);
+    z-index: 100;
+    position: absolute;
+    left: 0%;
+    top: 0%;
+    width: 100vw;
+    height: 100vh;
+}
+
 /* サイドメニュー */
 #sideMenu{
     position: absolute;
@@ -201,14 +211,24 @@ body{
     
 }
 
+.deleteButton{
+    outline: none !important;
+    user-select: none;
+    border-radius: 10px;
+}
 
+.deleteButton:hover{
+    text-decoration: underline;
+}
 
+#searchResultArea{
+    z-index: 30;
+    position: relative;
+    background-color: #1b272b;
+}
 
-
-
-
-
-
+/* 検索結果ボタン */
+.searchresultButton{}
 
 
 
