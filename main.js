@@ -49,6 +49,10 @@ function hensu(){
 //new folder
 var newFolderMode=false;
 function switchFolderMode(){
+    //検索結果ボタンリセット
+    for(let element of Array.from(document.getElementsByClassName('searchresultButton'))){
+        element.remove();
+    }
     switch (newFolderMode){
 
         case true:{
@@ -121,6 +125,11 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
             const div = document.createElement('div');
             div.style.width='100%';
             div.classList.add('mt-1');
+                //線を描画
+            div.style.borderTop="none";
+            div.style.borderRight="none";
+            div.style.borderBottom="none";
+            div.style.borderLeft="1px solid rgba(203, 206, 233, 0.3)";
             parentDiv.appendChild(div);
 
                 //フォルダ名　ボタン生成
@@ -689,7 +698,6 @@ function startEventListen(){
         }
 
         //idボックスを参照
-        //TODO　削除済み考慮する必要あり
         for(let element of Array.from(idArray)){
             try{
                 if(((mainData[element].memo).indexOf(searchTextbox.value) != -1) && (mainData[element].type=="ファイル")){
@@ -697,6 +705,53 @@ function startEventListen(){
                     //親div
                     const div = document.createElement('div');
                     div.classList.add('searchresultButton');
+                    div.addEventListener('click',function(event){
+                        //操作中要素に設定
+                        currentElementID=element;
+                        currentFileID=element;
+                        //ドキュメントエリアに反映（ドキュメント、ファイル名、更新日、パス）
+                        memoTexrarea.value=mainData[currentFileID].memo;
+                        fileNameText.value=mainData[currentFileID].name;
+                        updateLabel.textContent=mainData[currentFileID].updateAt;
+                        pathLabel.textContent=mainData[currentFileID].path;
+                        //選択用クラス除去
+                        for(let element of Array.from(document.getElementsByClassName('openFile'))){
+                            element.classList.remove('openFile');
+                        }
+                        //選択用クラス自分に付与
+                        document.getElementById(element).classList.add('openFile');
+                        //親フォルダにクラス付与
+                        document.getElementById(mainData[element].parentID).classList.add('openFile');
+
+                        //ボタンリセット
+                        for(let element of Array.from(document.getElementsByClassName('searchresultButton'))){
+                            element.remove();
+                        }
+                        //ボックスクリア
+                        searchTextbox.value="";
+                    })
+                    div.addEventListener('mouseenter',function(event){
+                        div.style.backgroundColor="#394f57";
+                        //操作中要素に設定
+                        currentElementID=element;
+                        currentFileID=element;
+                        //ドキュメントエリアに反映（ドキュメント、ファイル名、更新日、パス）
+                        memoTexrarea.value=mainData[currentFileID].memo;
+                        fileNameText.value=mainData[currentFileID].name;
+                        updateLabel.textContent=mainData[currentFileID].updateAt;
+                        pathLabel.textContent=mainData[currentFileID].path;
+                        //選択用クラス除去
+                        for(let element of Array.from(document.getElementsByClassName('openFile'))){
+                            element.classList.remove('openFile');
+                        }
+                        //選択用クラス自分に付与
+                        document.getElementById(element).classList.add('openFile');
+                        //親フォルダにクラス付与
+                        document.getElementById(mainData[element].parentID).classList.add('openFile');
+                    })
+                    div.addEventListener('mouseleave',function(event){
+                        div.style.backgroundColor="transparent";
+                    })
                     searchResultArea.appendChild(div);
 
                     //ボタン
@@ -723,7 +778,36 @@ function startEventListen(){
                         document.getElementById(element).classList.add('openFile');
                         //親フォルダにクラス付与
                         document.getElementById(mainData[element].parentID).classList.add('openFile');
-                        memoTexrarea.focus();
+
+                        //ボタンリセット
+                        for(let element of Array.from(document.getElementsByClassName('searchresultButton'))){
+                            element.remove();
+                        }
+                        //ボックスクリア
+                        searchTextbox.value="";
+                    })
+
+                    button.addEventListener('mouseenter',function(event){
+                        div.style.backgroundColor="#394f57";
+                        //操作中要素に設定
+                        currentElementID=element;
+                        currentFileID=element;
+                        //ドキュメントエリアに反映（ドキュメント、ファイル名、更新日、パス）
+                        memoTexrarea.value=mainData[currentFileID].memo;
+                        fileNameText.value=mainData[currentFileID].name;
+                        updateLabel.textContent=mainData[currentFileID].updateAt;
+                        pathLabel.textContent=mainData[currentFileID].path;
+                        //選択用クラス除去
+                        for(let element of Array.from(document.getElementsByClassName('openFile'))){
+                            element.classList.remove('openFile');
+                        }
+                        //選択用クラス自分に付与
+                        document.getElementById(element).classList.add('openFile');
+                        //親フォルダにクラス付与
+                        document.getElementById(mainData[element].parentID).classList.add('openFile');
+                    })
+                    button.addEventListener('mouseleave',function(event){
+                        div.style.backgroundColor="transparent";
                     })
 
                     div.appendChild(button);
