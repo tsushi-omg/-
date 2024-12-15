@@ -710,44 +710,16 @@ function startEventListen(){
         }
     })
 
-    // //リンク集へ移動
-    // var displayKanrikun = false;
-    // document.addEventListener('keydown',function(event){
-    //     //ctrl + shift + enter
-    //     if(event.ctrlKey && event.shiftKey && event.key === 'Enter'){
-    //         if(displayKanrikun == false){
-    //             kanriKun.hidden=false;
-    //             displayKanrikun=true;
-    //         }else{
-    //             kanriKun.hidden=true;
-    //             displayKanrikun=false;
-    //         }
-    //     }
-    // })
+    //選択内容でgoogle検索
+    document.addEventListener('keydown',function(event){
+        //ctrl + shift + enter
+        if(event.ctrlKey && event.shiftKey && event.key === 'Enter'){
+            // 新しいタブでページ遷移
+            window.open(`https://www.google.com/search?q=${window.getSelection().toString()}`, "_blank");
 
-
-    var displayKanrikun = false;
-    var iframe = document.getElementById("kanriKun");  // 親ページのiframeを取得
-    
-    document.addEventListener('keydown', function(event) {
-        // ctrl + shift + enter
-        if (event.ctrlKey && event.shiftKey && event.key === 'Enter') {
-            var kanriKunContent = iframe.contentWindow.document;  // iframe内のdocumentにアクセス
-    
-            if (displayKanrikun === false) {
-                if (kanriKunContent) {
-                    kanriKunContent.hidden = false;  // iframe内の要素を表示
-                }
-                displayKanrikun = true;
-            } else {
-                if (kanriKunContent) {
-                    kanriKunContent.hidden = true;  // iframe内の要素を非表示
-                }
-                displayKanrikun = false;
-            }
         }
-    });
-    
+    })
+
 
     //検索ボックス
     searchTextbox.addEventListener('input',function(event){
