@@ -240,7 +240,13 @@ body{
 /* 検索結果ボタン */
 .searchresultButton{}
 
-
+#kanriKun{
+    border: #1a1a1a;
+    width: 100%;
+    height: 100%;
+    z-index: 9000;
+    position: absolute;
+}
 
 
 

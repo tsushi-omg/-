@@ -25,6 +25,7 @@ var sideMenu;
 var layer;
 var dataryoiki;
 var searchResultArea;
+var kanriKun;
 
 // 要素import
 function hensu(){
@@ -42,6 +43,7 @@ function hensu(){
     layer = document.getElementById('layer');
     dataryoiki = document.getElementById('dataryoiki');
     searchResultArea = document.getElementById('searchResultArea');
+    kanriKun = document.getElementById('kanriKun');
 
 
 }
@@ -705,6 +707,20 @@ function startEventListen(){
             mainData[currentFileID].updateAt=getCurrentDate();
             //変更を保存
             savaStrage();
+        }
+    })
+
+    //リンク集へ移動
+    var displayKanrikun = false;
+    document.addEventListener('keydown',function(event){
+        //ctrl + shift + enter
+        if(event.ctrlKey && event.shiftKey && event.key === 'Enter')
+        if(displayKanrikun == false){
+            kanriKun.hidden=false;
+            displayKanrikun=true;
+        }else{
+            kanriKun.hidden=true;
+            displayKanrikun=false;
         }
     })
 
