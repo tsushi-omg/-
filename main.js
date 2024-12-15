@@ -689,21 +689,22 @@ function startEventListen(){
     //     savaStrage();
     // })
 
-    //クリップボードにコピー -----
+    //-----挿入
     document.addEventListener('keydown',function(event){
         if(event.ctrlKey && event.key===';'){
             //デフォルト処理無効化
             event.preventDefault();
-
-            //クリップボードにコピー
-            // navigator.clipboard.writeText('------------------------------------------------------------------------------------------------------------------------------------------------------');
-            //挿入
             // カーソル位置を取得
             var cursorS = memoTexrarea.selectionStart;
             var cursorE = memoTexrarea.selectionEnd;
-            
+            //前 | 後ろ（この間に挿入して代入）
             var newText = `${memoTexrarea.value.substring(0,cursorS)}------------------------------------------------------------------------------------------------------------------------------------------------------${memoTexrarea.value.substring(cursorE)}`;
             memoTexrarea.value=newText;
+            //ドキュメント、更新日更新（表示：ドキュメント、ファイル名、更新日、パス）
+            mainData[currentFileID].memo=memoTexrarea.value;
+            mainData[currentFileID].updateAt=getCurrentDate();
+            //変更を保存
+            savaStrage();
         }
     })
 
