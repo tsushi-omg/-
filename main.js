@@ -26,6 +26,7 @@ var layer;
 var dataryoiki;
 var searchResultArea;
 var kanriKun;
+var kanriKunCloseButton;
 
 // 要素import
 function hensu(){
@@ -44,6 +45,7 @@ function hensu(){
     dataryoiki = document.getElementById('dataryoiki');
     searchResultArea = document.getElementById('searchResultArea');
     kanriKun = document.getElementById('kanriKun');
+    kanriKunCloseButton = document.getElementById('kanriKunCloseButton');
 
 
 }
@@ -675,6 +677,11 @@ function closeMenu(){
 }
 
 
+//管理くん終了
+function kanriKunClose(){
+    kanriKun.hidden=true;
+    kanriKunCloseButton.hidden=true;
+}
 
 
 // イベントリスナー(dom読込後に開始)*****************************************************************************
@@ -713,12 +720,28 @@ function startEventListen(){
     //選択内容でgoogle検索
     document.addEventListener('keydown',function(event){
         //ctrl + shift + enter
-        if(event.ctrlKey && event.shiftKey && event.key === 'Enter'){
+        if(event.ctrlKey && event.shiftKey && event.key === 'G'){
             // 新しいタブでページ遷移
             window.open(`https://www.google.com/search?q=${window.getSelection().toString()}`, "_blank");
 
         }
     })
+
+    //管理君
+    document.addEventListener('keydown', function(event) {
+        // ctrl + shift + enter
+        if (event.ctrlKey && event.shiftKey && event.key === 'Enter') {
+    
+            if(kanriKun.hidden==true){
+                //表示
+                kanriKun.hidden=false;
+                kanriKunCloseButton.hidden=false;
+            }else{
+                //非表示
+                kanriKunClose();
+            }
+        }
+    });
 
 
     //検索ボックス
