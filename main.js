@@ -689,6 +689,24 @@ function startEventListen(){
     //     savaStrage();
     // })
 
+    //クリップボードにコピー -----
+    document.addEventListener('keydown',function(event){
+        if(event.ctrlKey && event.key===';'){
+            //デフォルト処理無効化
+            event.preventDefault();
+
+            //クリップボードにコピー
+            // navigator.clipboard.writeText('------------------------------------------------------------------------------------------------------------------------------------------------------');
+            //挿入
+            // カーソル位置を取得
+            var cursorS = memoTexrarea.selectionStart;
+            var cursorE = memoTexrarea.selectionEnd;
+            
+            var newText = `${memoTexrarea.value.substring(0,cursorS)}------------------------------------------------------------------------------------------------------------------------------------------------------${memoTexrarea.value.substring(cursorE)}`;
+            memoTexrarea.value=newText;
+        }
+    })
+
     //検索ボックス
     searchTextbox.addEventListener('input',function(event){
 
