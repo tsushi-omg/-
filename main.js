@@ -512,9 +512,6 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                     fileNameText.value=mainData[currentFileID].name;
                     updateLabel.textContent=mainData[currentFileID].updateAt;
                     pathLabel.textContent=mainData[currentFileID].path;
-                    //ハイライトｊｓ
-                    heighligthArea.textContent=memoTexrarea.value;
-                    hljs.highlightElement(heighligthArea);
                     //選択用クラス除去
                     for(let element of Array.from(document.getElementsByClassName('openFile'))){
                         element.classList.remove('openFile');
@@ -523,14 +520,14 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                     file.classList.add('openFile');
                     //親フォルダにクラス付与
                     parentFolder.classList.add('openFile');
-                    //ハイライトjs
-                    heighligthArea.textContent=memoTexrarea.value;
-                    hljs.highlightElement(heighligthArea);
-                    heighlightParent.hidden=false;
-                    //スタイル
-                    pathLabel.classList.add('pathHi');
-                    fileNameText.classList.add('boxHi');
-                    renameButton.classList.add('buttonHi');
+                    // //ハイライトjs
+                    // heighligthArea.textContent=memoTexrarea.value;
+                    // hljs.highlightElement(heighligthArea);
+                    // heighlightParent.hidden=false;
+                    // //スタイル
+                    // pathLabel.classList.add('pathHi');
+                    // fileNameText.classList.add('boxHi');
+                    // renameButton.classList.add('buttonHi');
 
                     memoTexrarea.focus();
 
@@ -852,14 +849,14 @@ function startEventListen(){
                         document.getElementById(element).classList.add('openFile');
                         //親フォルダにクラス付与
                         document.getElementById(mainData[element].parentID).classList.add('openFile');
-                        //ハイライトjs
-                        heighligthArea.textContent=memoTexrarea.value;
-                        hljs.highlightElement(heighligthArea);
-                        heighlightParent.hidden=false;
-                        //スタイル
-                        pathLabel.classList.add('pathHi');
-                        fileNameText.classList.add('boxHi');
-                        renameButton.classList.add('buttonHi');
+                        // //ハイライトjs
+                        // heighligthArea.textContent=memoTexrarea.value;
+                        // hljs.highlightElement(heighligthArea);
+                        // heighlightParent.hidden=false;
+                        // //スタイル
+                        // pathLabel.classList.add('pathHi');
+                        // fileNameText.classList.add('boxHi');
+                        // renameButton.classList.add('buttonHi');
                     })
                     div.addEventListener('mouseleave',function(event){
                         div.style.backgroundColor="transparent";
