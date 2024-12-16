@@ -255,3 +255,47 @@ body{
     opacity: 1 !important;
 }
 
+/* ハイライトjs */
+
+#heighlightParent{
+    left: 31%;
+    top: 0%;
+    width: 69vw;
+    height: 100vh;
+    background-color: rgb(24, 28, 37);
+    z-index: 49;
+}
+
+
+#heighligthArea{
+    position: absolute;
+    z-index: 50;
+    background-color: transparent;
+    left: 2%;
+    top: 7%;
+    width: 96%;
+    height: 87%;
+    outline: none;
+    color: rgb(184, 184, 184);
+    border: none;
+    overflow-x: auto;
+    font-size: 16px;
+}
+
+/* ハイライト時 */
+.pathHi{
+    color: rgb(185, 185, 185) !important;
+}
+
+.buttonHi{
+    fill: rgb(224, 224, 224) !important;
+}
+
+.buttonHi:hover{
+    background-color: rgb(47, 53, 109) !important;
+}
+
+.boxHi{
+    color: rgb(109, 231, 231) !important;
+    border-color: aliceblue;
+}

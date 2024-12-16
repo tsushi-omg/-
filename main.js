@@ -27,6 +27,9 @@ var dataryoiki;
 var searchResultArea;
 var kanriKun;
 var kanriKunCloseButton;
+var heighligthArea;
+var heighlightParent;
+var renameButton;
 
 // 要素import
 function hensu(){
@@ -46,6 +49,9 @@ function hensu(){
     searchResultArea = document.getElementById('searchResultArea');
     kanriKun = document.getElementById('kanriKun');
     kanriKunCloseButton = document.getElementById('kanriKunCloseButton');
+    heighligthArea = document.getElementById('heighligthArea');
+    heighlightParent = document.getElementById('heighlightParent');
+    renameButton = document.getElementById('renameButton');
 
 
 }
@@ -506,6 +512,9 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                     fileNameText.value=mainData[currentFileID].name;
                     updateLabel.textContent=mainData[currentFileID].updateAt;
                     pathLabel.textContent=mainData[currentFileID].path;
+                    //ハイライトｊｓ
+                    heighligthArea.textContent=memoTexrarea.value;
+                    hljs.highlightElement(heighligthArea);
                     //選択用クラス除去
                     for(let element of Array.from(document.getElementsByClassName('openFile'))){
                         element.classList.remove('openFile');
@@ -514,6 +523,14 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                     file.classList.add('openFile');
                     //親フォルダにクラス付与
                     parentFolder.classList.add('openFile');
+                    //ハイライトjs
+                    heighligthArea.textContent=memoTexrarea.value;
+                    hljs.highlightElement(heighligthArea);
+                    heighlightParent.hidden=false;
+                    //スタイル
+                    pathLabel.classList.add('pathHi');
+                    fileNameText.classList.add('boxHi');
+                    renameButton.classList.add('buttonHi');
 
                     memoTexrarea.focus();
 
@@ -687,13 +704,20 @@ function kanriKunClose(){
 // イベントリスナー(dom読込後に開始)*****************************************************************************
 function startEventListen(){
     memoTexrarea.addEventListener('input',function(event){
+        //ファイル未選択時
+        try{
         //ドキュメント、更新日更新（表示：ドキュメント、ファイル名、更新日、パス）
         mainData[currentFileID].memo=memoTexrarea.value;
         mainData[currentFileID].updateAt=getCurrentDate();
         //変更を保存
         savaStrage();
+        }catch(error){}
     })
 
+    // memoTexrarea.addEventListener('scroll', function(event) {
+    //     heighligthArea.scrollTop = memoTexrarea.scrollTop;  // scrollTopの正しいプロパティ名
+    // });
+    
     // dataryoiki.addEventListener('input',function(event){
     //     savaStrage();
     // })
@@ -730,7 +754,7 @@ function startEventListen(){
     //管理君
     document.addEventListener('keydown', function(event) {
         // ctrl + shift + enter
-        if (event.ctrlKey && event.shiftKey && event.key === 'Enter') {
+        if (event.ctrlKey && event.shiftKey && event.key === 'K') {
     
             if(kanriKun.hidden==true){
                 //表示
@@ -739,6 +763,31 @@ function startEventListen(){
             }else{
                 //非表示
                 kanriKunClose();
+            }
+        }
+    });
+
+    //ハイライトｊｓ
+    document.addEventListener('keydown', function(event) {
+        // ctrl + shift + enter
+        if (event.ctrlKey && event.shiftKey && event.key === 'Enter') {
+    
+            if(heighlightParent.hidden==true){
+                //表示
+                //ハイライトjs
+                heighligthArea.textContent=memoTexrarea.value;
+                hljs.highlightElement(heighligthArea);
+                heighlightParent.hidden=false;
+                //スタイル
+                pathLabel.classList.add('pathHi');
+                fileNameText.classList.add('boxHi');
+                renameButton.classList.add('buttonHi');
+            }else{
+                //非表示
+                heighlightParent.hidden=true;
+                pathLabel.classList.remove('pathHi');
+                fileNameText.classList.remove('boxHi');
+                renameButton.classList.remove('buttonHi');
             }
         }
     });
@@ -803,6 +852,14 @@ function startEventListen(){
                         document.getElementById(element).classList.add('openFile');
                         //親フォルダにクラス付与
                         document.getElementById(mainData[element].parentID).classList.add('openFile');
+                        //ハイライトjs
+                        heighligthArea.textContent=memoTexrarea.value;
+                        hljs.highlightElement(heighligthArea);
+                        heighlightParent.hidden=false;
+                        //スタイル
+                        pathLabel.classList.add('pathHi');
+                        fileNameText.classList.add('boxHi');
+                        renameButton.classList.add('buttonHi');
                     })
                     div.addEventListener('mouseleave',function(event){
                         div.style.backgroundColor="transparent";
