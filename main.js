@@ -528,6 +528,11 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                     // pathLabel.classList.add('pathHi');
                     // fileNameText.classList.add('boxHi');
                     // renameButton.classList.add('buttonHi');
+                    //ハイライト非表示
+                    heighlightParent.hidden=true;
+                    pathLabel.classList.remove('pathHi');
+                    fileNameText.classList.remove('boxHi');
+                    renameButton.classList.remove('buttonHi');
 
                     memoTexrarea.focus();
 
@@ -780,7 +785,7 @@ function startEventListen(){
                 fileNameText.classList.add('boxHi');
                 renameButton.classList.add('buttonHi');
             }else{
-                //非表示
+                //ハイライト非表示
                 heighlightParent.hidden=true;
                 pathLabel.classList.remove('pathHi');
                 fileNameText.classList.remove('boxHi');
@@ -857,6 +862,11 @@ function startEventListen(){
                         // pathLabel.classList.add('pathHi');
                         // fileNameText.classList.add('boxHi');
                         // renameButton.classList.add('buttonHi');
+                        //ハイライト非表示
+                        heighlightParent.hidden=true;
+                        pathLabel.classList.remove('pathHi');
+                        fileNameText.classList.remove('boxHi');
+                        renameButton.classList.remove('buttonHi');
                     })
                     div.addEventListener('mouseleave',function(event){
                         div.style.backgroundColor="transparent";
