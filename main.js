@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     setSavedID();
     startEventListen();
     constructAll();
+    createReadme();
 
 })
 
@@ -56,6 +57,15 @@ function hensu(){
 
 }
 
+var readText = `------------------------------------------------------------------------------------------------------------------------------------------------------
+コマンド
+------------------------------------------------------------------------------------------------------------------------------------------------------
+・【ctrl + shift + K】管理くんへ移動
+・【ctrl + shift + G】選択中の文字列をGoogle検索
+・【ctrl + shift + Enter】テキストのハイライト切替　※view専用
+・【ctrl + shift + C】保存データコピー
+・【ctrl + shift + R】データペースト領域を表示　※未実装`;
+
 //new folder
 var newFolderMode=false;
 function switchFolderMode(){
@@ -90,11 +100,16 @@ function switchFolderMode(){
 
 //フォルダ生成　大元
 function BeforeCreateFolderFunction(){
-    createFolderFunction(folderDirectory,newFolderTextbox,newFolderTextbox.value,"","folder","","","",true,false,"","");
+    createFolderFunction(folderDirectory,newFolderTextbox,newFolderTextbox.value,"","folder","","","",true,false,"","",false);
+}
+
+//read me
+function createReadme(){
+    createFolderFunction(folderDirectory,"readme","read me","","file","","","",false,false,"","",true);
 }
 
 // フォルダ作成📁*************************************************************************************************
-function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelParam,parentFolder,parentIDPath,isTop,isConstruct,constructorID,constructorName){
+function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelParam,parentFolder,parentIDPath,isTop,isConstruct,constructorID,constructorName,isReadMe){
 
     switch(type){
         case "folder":{
@@ -336,7 +351,7 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                     newFolderButtonChild.hidden=true;
                     newFolderButtonChild.addEventListener('click',function(event){
                         currentParentFolderID=folder.id;//親フォルダidを参照
-                        createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"folder",emptyLabel,folder,idParam,false,false,"","");
+                        createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"folder",emptyLabel,folder,idParam,false,false,"","",false);
                     })
                     div2.appendChild(newFolderButtonChild);
 
@@ -348,7 +363,7 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                     newFileButtonChild.textContent="📄";
                     newFileButtonChild.hidden=true;
                     newFileButtonChild.addEventListener('click',function(event){
-                        createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"file",emptyLabel,folder,idParam,false,false,"","");
+                        createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"file",emptyLabel,folder,idParam,false,false,"","",false);
                     })
                     div2.appendChild(newFileButtonChild);
 
@@ -435,11 +450,11 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                 //直下の子要素を取得
                 const folderArray = Object.values(mainData).filter(item => (item.parentID == constructorID) && (item.type=="フォルダ"));
                 for(let i = 0; i < folderArray.length; i++){
-                    createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"folder",emptyLabel,folder,idParam,false,true,folderArray[i].id,folderArray[i].name);
+                    createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"folder",emptyLabel,folder,idParam,false,true,folderArray[i].id,folderArray[i].name,false);
                 }
                 const fileArray = Object.values(mainData).filter(item => (item.parentID == constructorID) && (item.type=="ファイル"));
                 for(let i = 0; i < fileArray.length; i++){
-                    createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"file",emptyLabel,folder,idParam,false,true,fileArray[i].id,fileArray[i].name);
+                    createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"file",emptyLabel,folder,idParam,false,true,fileArray[i].id,fileArray[i].name,false);
                 }
             }
 
@@ -461,10 +476,43 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
 
         case "file":{//************************************************************************************************************ */
         
+            if(isReadMe){
+                //親div生成
+                const div = document.createElement('div');
+                div.style.width='100%';
+                parentDiv.appendChild(div);
+    
+                //ファイル名　ボタン生成
+                const file = document.createElement('button');
+                file.textContent="📄read me";
+                file.classList.add('isFile');
+                file.id=randomID();
+                //クリックイベント
+                file.addEventListener('click',function(event){
+                    //ドキュメントエリアに反映（ドキュメント、ファイル名、更新日、パス）
+                    memoTexrarea.value=readText;
+                    fileNameText.value="read me";
+                    updateLabel.textContent="----/--/--";
+                    pathLabel.textContent="";
+                    //選択用クラス除去
+                    for(let element of Array.from(document.getElementsByClassName('openFile'))){
+                        element.classList.remove('openFile');
+                    }
+                    //選択用クラス自分に付与
+                    file.classList.add('openFile');
+                    //ハイライト非表示
+                    heighlightParent.hidden=true;
+                    pathLabel.classList.remove('pathHi');
+                    fileNameText.classList.remove('boxHi');
+                    renameButton.classList.remove('buttonHi');
+                })
+                div.appendChild(file);
+                return;
+            }
             var fileName = value;
             if(isConstruct)fileName=constructorName;
 
-            if(!isConstruct){
+            if(!isConstruct && !isReadMe){
                 //未入力チェック
                 if(fileName==""){
                     alert("ファイル名を入力してください。");
@@ -486,7 +534,7 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
             if(fileName.indexOf(",") != -1){
                 let array = splitComma(fileName);
                 for(let i = 0; i < array.length; i++){
-                    createFolderFunction(parentDiv,nameTextbox,array[i],path,type,emptyLabelParam,parentFolder,parentIDPath,isTop,isConstruct,"","");
+                    createFolderFunction(parentDiv,nameTextbox,array[i],path,type,emptyLabelParam,parentFolder,parentIDPath,isTop,isConstruct,"","",false);
                 }
                 return;
             }
@@ -675,7 +723,7 @@ function constructAll(){
     for(let i = 0; i < topFolderArray.length; i++){//先頭フォルダの数だけ繰り返し
         //固有の先頭フォルダ
         const topFolder = topFolderArray[i];
-        createFolderFunction(folderDirectory,newFolderTextbox,topFolder.name,"","folder","","","",true,true,topFolder.id,topFolder.name);//idと表示名は必須
+        createFolderFunction(folderDirectory,newFolderTextbox,topFolder.name,"","folder","","","",true,true,topFolder.id,topFolder.name,false);//idと表示名は必須
     }
 }
 
@@ -951,6 +999,53 @@ function startEventListen(){
             }
         }
     })
+
+    //データコピー
+    document.addEventListener('keydown',function(event){
+        if(event.ctrlKey && event.shiftKey && event.key==='D'){
+            event.preventDefault();
+            //文字列化したデータをコピー
+            try{
+                navigator.clipboard.writeText(JSON.stringify(mainData));
+                alert("データコピー成功");
+            }catch(error){
+                alert("データコピー失敗");
+            }
+        }
+    })
+
+    // //データ読込み
+    // var isDatabox=false;
+    // document.addEventListener('keydown',function(event){
+    //     if(event.ctrlKey && event.shiftKey && event.key==='R'){
+    //         event.preventDefault();
+
+    //         if(isDatabox)return;
+    //         isDatabox=true;
+    //         //入力ボックス（クリックで削除）
+    //         const box = document.createElement("input");
+    //         box.type="text";
+    //         box.zIndex=1000;
+    //         box.classList.add('dataBox');
+    //         box.classList.add('textbox1');
+    //         box.placeholder="データをペースト";
+    //         document.body.appendChild(box);
+    //         box.addEventListener('click',function(event){
+    //             box.remove();
+    //             isDatabox=false;
+    //         })
+    //         box.addEventListener('input',function(event){
+    //             mainData=box.value;
+    //             savaStrage();
+    //             roadStrage();
+    //             constructAll();
+    //             box.remove();
+    //             isDatabox=false;
+    //         })
+    //         box.focus();
+    //     }
+    // })
+
 }
 
 

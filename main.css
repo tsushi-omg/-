@@ -299,3 +299,9 @@ body{
     color: rgb(109, 231, 231) !important;
     border-color: aliceblue;
 }
+
+.dataBox{
+    position: absolute;
+    top: 45%;
+    left: 45%;
+}
