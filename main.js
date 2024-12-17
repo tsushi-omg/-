@@ -64,7 +64,9 @@ var readText = `----------------------------------------------------------------
 ・【ctrl + shift + G】選択中の文字列をGoogle検索
 ・【ctrl + shift + Enter】テキストのハイライト切替　※view専用
 ・【ctrl + shift + C】保存データコピー
-・【ctrl + shift + R】データペースト領域を表示　※未実装`;
+・【ctrl + shift + R】データペースト領域を表示　※未実装
+・【ctrl + ;】区切り線
+・【ctrl + shift + M】地図`;
 
 //new folder
 var newFolderMode=false;
@@ -790,6 +792,46 @@ function startEventListen(){
             savaStrage();
         }
     })
+
+    //思考マップ挿入
+    document.addEventListener('keydown',function(event){
+        if(event.ctrlKey && event.shiftKey && event.key==='M'){
+            //デフォルト処理無効化
+            event.preventDefault();
+            // カーソル位置を取得
+            var cursorS = memoTexrarea.selectionStart;
+            var cursorE = memoTexrarea.selectionEnd;
+            //前 | 後ろ（この間に挿入して代入）
+            var newText = `${memoTexrarea.value.substring(0,cursorS)}------------------------------------------------------------------------------------------------------------------------------------------------------
+最終成果
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+手順
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+①
+②
+③
+④
+⑤
+⑥
+⑦
+⑧
+⑨
+⑩${memoTexrarea.value.substring(cursorE)}`;
+            memoTexrarea.value=newText;
+            //ドキュメント、更新日更新（表示：ドキュメント、ファイル名、更新日、パス）
+            mainData[currentFileID].memo=memoTexrarea.value;
+            mainData[currentFileID].updateAt=getCurrentDate();
+            //変更を保存
+            savaStrage();
+        }
+    })
+
+    
 
     //選択内容でgoogle検索
     document.addEventListener('keydown',function(event){
