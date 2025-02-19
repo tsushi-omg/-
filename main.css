@@ -1,7 +1,12 @@
-body{
-    /* background-image: url("https://cdn.pixabay.com/photo/2018/04/05/14/09/sunflowers-3292932_960_720.jpg"); */
-    background-color: rgb(32, 32, 32);
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@300;400;700&display=swap');
+
+body {
+    font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    background-color: #1e1e1e;
+    /* color: #ffffff; */
+    line-height: 1.6;
 }
+
 
 /* スクロールバー */
 ::-webkit-scrollbar {
@@ -163,7 +168,8 @@ body{
     top: 0%;
     width: 69vw;
     height: 100vh;
-    background-color: rgb(255, 255, 255,0.7);
+    /* background-color: rgb(255, 255, 255,0.7); */
+    background-color: #202020;
 }
 
 #memoTexrarea{
@@ -175,7 +181,8 @@ body{
     height: 87%;
     outline: none;
     resize: none;
-    color: black;
+    /* color: black; */
+    color: rgb(230, 230, 230);
     border: none;
 }
 
