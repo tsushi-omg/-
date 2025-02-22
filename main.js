@@ -1324,6 +1324,35 @@ function startEventListen(){
     //     }
     // })
 
+    fileNameText.addEventListener('blur',function(event){
+        //>使用不可
+        if(fileNameText.value.indexOf(">") != -1){
+            alert(" > は使用できません。");
+            fileNameText.focus();
+            return;
+        }
+        //tool or file
+        if(document.getElementById(currentElementID).classList.contains('isFile')){
+            //ファイル名変更
+            try{
+                mainData[currentFileID].name=fileNameText.value;
+                document.getElementById(currentFileID).textContent=`📄${fileNameText.value}`;
+                //変更を保存
+                savaStrage();
+            }catch(error){}
+        }
+        if(document.getElementById(currentElementID).classList.contains('isTool')){
+            //ツール名変更 --ok
+            try{
+                mainData[currentToolID].name=fileNameText.value;
+                document.getElementById(currentToolID).textContent=`🤖${fileNameText.value}`;
+                //変更を保存
+                savaStrage();
+            }
+            catch(error){}
+        }
+    });
+
 }
 
 
