@@ -7,6 +7,7 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/monokai-sublime.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
     <link href="main.css" rel="stylesheet">
     <script src="main.js"></script>
 </head>
@@ -51,6 +52,41 @@
      <!-- メモ帳エリア -->
     <div id="memoArea" class="absolute">
         <textarea id="memoTexrarea" spellcheck="false" class="absolute">ファイル未選択</textarea>
+        <!-- モナコエディタ -->
+        <div id="monacoWin" class="absolute" hidden>
+            <!-- 言語切替ボタン -->
+             <button class="button_lang" onclick="changeLang('pre')">＜</button>
+             <label id="language_lbl" style="color: rgb(206, 206, 206); user-select: none; color: rgb(163, 163, 163); min-width: 36px; font-weight: bold;" class="ml-2">html</label>
+             <button class="button_lang ml-2" onclick="changeLang('next')">＞</button>
+
+            <!-- monaco editor-->
+            <div id="monacoEditor" class="absolute"></div>
+
+            <!-- 電源ボタン -->
+            <svg class="ml-2" id="powerButton" onclick="setPower()" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-84 31.5-156.5T197-763l56 56q-44 44-68.5 102T160-480q0 134 93 227t227 93q134 0 227-93t93-227q0-67-24.5-125T707-707l56-56q54 54 85.5 126.5T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-40-360v-440h80v440h-80Z"/></svg>
+            
+            <!-- タグ -->
+            <div style="width: 100%; height: 100%; position: absolute; pointer-events: none;">
+                <div id="exTag_s" class="explainArea" style="top: 3.3%;">
+                    <label style="color: rgb(192, 192, 192); user-select: none;"></label>
+                </div>
+                <div id="exTag_e" class="explainArea" style="top: 86%;">
+                    <label style="color: rgb(192, 192, 192); user-select: none;"></label>
+                </div>
+            </div>
+
+            <!-- ｈｔｍｌのみで実行 -->
+             <div style="position: absolute; top: 91%; left: 7%; z-index: 20;">
+            <input type="checkbox" id="htmlOnlyCheck" onclick="htmlOnly()">
+            <label style="color: rgb(192, 192, 192); user-select: none;" >HTMLのみで実行</label>
+            </div>
+            
+        </div>
+
+        <!-- iframe -->
+        <div id="iframeContainer" hidden>
+            <iframe id="toolframe" frameborder="0" width="100%" height="300px"></iframe>
+        </div>
 
         <!-- ヘッダー領域 -->
         <div class="absolute" style="left: 2%; top: 2%; width: 90%;">
@@ -74,10 +110,8 @@
     <!-- サイドメニューエリア -->
     <div id="sideMenu" style="z-index: 110;" hidden>
         <label class="mt-4 ml-2" style="color: white; font-weight: bold; background-color: rgb(68, 68, 68);">m e n u</label>
-        <!-- データ領域 -->
-        <div class="mt-4 ml-2" >
-        <label style="color: white;">データ領域</label><textarea id="dataryoiki"></textarea>
-        </div>
+        <!-- jsonダウンローダ -->
+        <button class="button1 mt-2 ml-2" onclick="downloadJSON()" id="jsonDownloader">jsonダウンロード</button>
     </div>
 
     <!-- 透明レイヤー -->

@@ -31,6 +31,15 @@ var kanriKunCloseButton;
 var heighligthArea;
 var heighlightParent;
 var renameButton;
+var monacoEditor;
+var monacoWin;
+var language_lbl;
+var powerButton;
+var iframeContainer;
+var toolframe;
+var  exTag_s;
+var  exTag_e;
+var htmlOnlyCheck;
 
 // 要素import
 function hensu(){
@@ -53,6 +62,15 @@ function hensu(){
     heighligthArea = document.getElementById('heighligthArea');
     heighlightParent = document.getElementById('heighlightParent');
     renameButton = document.getElementById('renameButton');
+    monacoEditor = document.getElementById('monacoEditor');
+    powerButton = document.getElementById('powerButton');
+    iframeContainer = document.getElementById('iframeContainer');
+    toolframe = document.getElementById('toolframe');
+    exTag_s = document.getElementById('exTag_s');
+    exTag_e = document.getElementById('exTag_e');
+    htmlOnlyCheck = document.getElementById('htmlOnlyCheck');
+    monacoWin = document.getElementById('monacoWin');//ウィンドウ
+    language_lbl = document.getElementById('language_lbl');//言語ラベル
 
 
 }
@@ -63,9 +81,8 @@ var readText = `----------------------------------------------------------------
 ・【ctrl + shift + K】管理くんへ移動
 ・【ctrl + shift + G】選択中の文字列をGoogle検索
 ・【ctrl + shift + Enter】テキストハイライト　※view専用
-・【ctrl + shift + C】保存データコピー
-・【ctrl + shift + R】データペースト領域を表示　※未実装
-・【ctrl + ;】区切り線`;
+・【ctrl + ;】区切り線
+・jsonファイルドロップ：データ読込`;
 
 //new folder
 var newFolderMode=false;
@@ -338,7 +355,7 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                     const childTextbox = document.createElement('input');
                     childTextbox.type="text";
                     childTextbox.classList.add('textbox1');
-                    childTextbox.placeholder="新規フォルダ／ファイル名";
+                    childTextbox.placeholder="新規フォルダ／ファイル／ツール名";
                     childTextbox.hidden=true;
                     childTextbox.style.width="270px";
                     div2.appendChild(childTextbox);
@@ -367,6 +384,18 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                         createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"file",emptyLabel,folder,idParam,false,false,"","",false);
                     })
                     div2.appendChild(newFileButtonChild);
+
+                    //new tool　※初期非表示
+                    const newToolButtonChild = document.createElement('button');
+                    newToolButtonChild.classList.add('button');
+                    newToolButtonChild.classList.add('buttonChild');
+                    newToolButtonChild.classList.add('ml-2');//隙間
+                    newToolButtonChild.textContent="🤖";
+                    newToolButtonChild.hidden=true;
+                    newToolButtonChild.addEventListener('click',function(event){
+                        createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"tool",emptyLabel,folder,idParam,false,false,"","",false);
+                    })
+                    div2.appendChild(newToolButtonChild);
 
                     //close create　※初期非表示
                     const closeButtonChild = document.createElement('button');
@@ -420,7 +449,6 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                     top:isTop,
                     type:"フォルダ",
                     name:folderName,
-                    // state:"close",　手動で開くのは楽だしこれは要らない。このために割く時間！
                     parentID:parentFolder.id,
                     parentIDPath:idParam,
                     path:path
@@ -456,6 +484,10 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                 const fileArray = Object.values(mainData).filter(item => (item.parentID == constructorID) && (item.type=="ファイル"));
                 for(let i = 0; i < fileArray.length; i++){
                     createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"file",emptyLabel,folder,idParam,false,true,fileArray[i].id,fileArray[i].name,false);
+                }
+                const toolArray = Object.values(mainData).filter(item => (item.parentID == constructorID) && (item.type=="ツール"));
+                for(let i = 0; i < toolArray.length; i++){
+                    createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"tool",emptyLabel,folder,idParam,false,true,toolArray[i].id,toolArray[i].name,false, toolArray[i].html, toolArray[i].css, toolArray[i].js);
                 }
             }
 
@@ -556,6 +588,10 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                     //操作中要素に設定
                     currentElementID=file.id;
                     currentFileID=file.id;
+                    //モナコ切替
+                    monacoWin.hidden = true;
+                    memoTexrarea.hidden = false;
+                    iframeContainer.hidden = true;
                     //ドキュメントエリアに反映（ドキュメント、ファイル名、更新日、パス）
                     memoTexrarea.value=mainData[currentFileID].memo;
                     fileNameText.value=mainData[currentFileID].name;
@@ -681,7 +717,202 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
             break;
     }
 
+    case "tool":{//************************************************************************************************************ */
+
+        var toolName = value;
+        if(isConstruct)toolName=constructorName;
+
+        if(!isConstruct && !isReadMe){
+            //未入力チェック
+            if(toolName==""){
+                alert("ツール名を入力してください。");
+                nameTextbox.focus();
+                return;
+            }
+            // > 使用不可
+            if(toolName.indexOf(">") != -1){
+                alert(" > は使用できません。");
+                nameTextbox.focus();
+                return;
+            }
+        }
+
+        //空ですラベル非表示
+        emptyLabelParam.hidden=true;
+
+        //一括選択時
+        if(toolName.indexOf(",") != -1){
+            let array = splitComma(toolName);
+            for(let i = 0; i < array.length; i++){
+                createFolderFunction(parentDiv,nameTextbox,array[i],path,type,emptyLabelParam,parentFolder,parentIDPath,isTop,isConstruct,"","",false);
+            }
+            return;
+        }
+
+        //親div生成
+        const div = document.createElement('div');
+        div.style.width='100%';
+        parentDiv.appendChild(div);
+
+            //ツール名　ボタン生成
+            const tool = document.createElement('button');
+            tool.textContent=`🤖${toolName}`;
+            tool.classList.add('isTool');
+            tool.id=randomID();
+            if(isConstruct)tool.id=constructorID;
+            //クリックイベント
+            tool.addEventListener('click',function(event){
+                //操作中要素に設定
+                currentElementID=tool.id;
+                currentToolID=tool.id;
+                //モナコ切替
+                monacoWin.hidden = false;
+                memoTexrarea.hidden = true;
+                window.editor.layout();
+                //htmlタブを表示
+                langKbn = 1;
+                setExTag();
+                if (editor.getModel()) {
+                    monaco.editor.setModelLanguage(editor.getModel(), "html");
+                }
+                language_lbl.textContent = "html";
+                //htmlOnlyチェック
+                htmlOnlyCheck.checked=mainData[currentToolID].htmlOnly;
+                htmlOnly();
+                //電源ボタンリセット
+                powerFlg = false;//初期実行　※falseのときtrueに変更される
+                setPower();
+                //ドキュメントエリアに反映（ドキュメント、ファイル名、更新日、パス）
+                window.editor.setValue(mainData[currentToolID].html);
+                fileNameText.value=mainData[currentToolID].name;
+                updateLabel.textContent=mainData[currentToolID].updateAt;
+                pathLabel.textContent=mainData[currentToolID].path;
+                //選択用クラス除去
+                for(let element of Array.from(document.getElementsByClassName('openFile'))){
+                    element.classList.remove('openFile');
+                }
+                //選択用クラス自分に付与
+                tool.classList.add('openFile');
+                //親フォルダにクラス付与
+                parentFolder.classList.add('openFile');
+                // //ハイライトjs
+                // heighligthArea.textContent=memoTexrarea.value;
+                // hljs.highlightElement(heighligthArea);
+                // heighlightParent.hidden=false;
+                // //スタイル
+                // pathLabel.classList.add('pathHi');
+                // toolNameText.classList.add('boxHi');
+                // renameButton.classList.add('buttonHi');
+                //ハイライト非表示
+                heighlightParent.hidden=true;
+                pathLabel.classList.remove('pathHi');
+                fileNameText.classList.remove('boxHi');
+                renameButton.classList.remove('buttonHi');
+
+                //フォーカス
+                window.editor.focus();
+
+            })
+
+            //右クリックイベント（新規作成）
+            tool.addEventListener('contextmenu',function(event){
+                // //デフォルトの右クリックイベントを無効
+                event.preventDefault();
+                tool.style.opacity="0.3";
+                deleteButton.hidden=false;
+                deleteLayer.hidden=false;
+            })
+
+            //削除ボタン
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent="⚠削除";
+            deleteButton.style.position="absolute";
+            deleteButton.style.left="15%";
+            deleteButton.hidden=true;
+            deleteButton.style.zIndex=120;
+            deleteButton.classList.add('deleteButton');
+            deleteButton.style.backgroundColor="rgba(219, 101, 101, 0.8)";
+            deleteButton.style.color="white";
+            deleteButton.addEventListener('click',function(event){
+                //画面から削除
+                div.remove();//※自分から消すと子要素が参照できなくなる
+                mainData[tool.id].type="deleted";
+                savaStrage();//--ok!
+            });
+            div.appendChild(deleteButton);
+
+            //削除時用レイヤー
+            const deleteLayer = document.createElement('div');
+            deleteLayer.style.backgroundColor="transparent";
+            deleteLayer.style.position="absolute";
+            deleteLayer.style.width="100vw";
+            deleteLayer.style.height="100vh";
+            deleteLayer.style.left="0%";
+            deleteLayer.style.top="0%";
+            deleteLayer.style.zIndex=100;
+            deleteLayer.hidden=true;
+            deleteLayer.addEventListener('click',function(event){
+                deleteButton.hidden=true;
+                deleteLayer.hidden=true;
+                tool.style.opacity="1.0";
+            });
+            document.body.appendChild(deleteLayer);
+
+
+            div.appendChild(tool);
+
+            // // パスラベル生成
+            // const pathLabel = document.createElement('label');
+            // pathLabel.classList.add('isPathLabel');
+            // pathLabel.classList.add('ml-2');
+            // pathLabel.textContent=path;
+            // div.appendChild(pathLabel);
+
+        //親要素idの継承
+        const idParam = parentIDPath=="" ? tool.id : `${parentIDPath},${tool.id}`;
+
+        //再描画の場合はスキップ
+        if(!isConstruct){
+            //ファイルデータ作成
+            mainData[tool.id]={
+                id:tool.id,
+                type:"ツール",
+                name:toolName,
+                parentID:parentFolder.id,
+                parentIDPath:idParam,
+                path:path,
+                html:"",
+                css:"",
+                js:"",
+                htmlOnly:false,
+                updateAt:getCurrentDate()
+            };
+
+            //親フォルダのhasChild＝true --ok.
+            // if(!isTop)mainData[parentFolder.id].hasChild=true;
+        }
+
+        if(isConstruct){
+            div.hidden=true;
+        }
+
+        //変更を保存
+        savaStrage();
+
+        //階層段
+        div.style.marginLeft="20px";
+
+        //ファイル名ボックスクリア
+        nameTextbox.value="";
+
+        //フォーカス
+        nameTextbox.focus();
+
+        break;
+}
+
     }
+    
 
 }
 
@@ -696,6 +927,7 @@ var mainData={};
 var currentElementID;//file / folder
 var currentFolderID;// folder
 var currentFileID;// file
+var currentToolID;// tool
 
 var currentParentFolderID;//子要素作成ボタン押下時に親フォルダを参照する
 
@@ -703,16 +935,21 @@ var currentParentFolderID;//子要素作成ボタン押下時に親フォルダ�
 //ローカルストレージ*****************************************************************
 //保存
 function savaStrage(){
+    try{
+    if(mainData == null)return;
     localStorage.setItem("mainData",JSON.stringify(mainData));
     dataryoiki.value=mainData;
+}catch(error){}
 }
 
 //読込
 function roadStrage(){
-    const storedData = localStorage.getItem("mainData");
-    if (storedData) {
-      mainData = JSON.parse(storedData);
-    }
+    try{
+        const storedData = localStorage.getItem("mainData");
+        if (storedData) {
+            mainData = JSON.parse(storedData);
+        }
+    }catch(error){}
 }
 
 
@@ -1168,3 +1405,339 @@ function getCurrentDate() {
 
     return `${year}/${month}/${day}`;
 }
+
+
+
+/*
+2.21 monaco editor実装（バックアップ済み）
+*/
+// var monacoEditor = document.getElementById('monacoEditor');
+// var monacoWin = document.getElementById('monacoWin');//ウィンドウ
+// var language_lbl = document.getElementById('language_lbl');//言語ラベル
+
+
+require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
+require(["vs/editor/editor.main"], function () {
+    window.editor = monaco.editor.create(document.getElementById("monacoEditor"), {
+        value: `<!--bodyタグの中身を記述--!>
+`,
+        language: "html",
+        theme: "vs-dark",
+        extraEditorClassName: "custom-editor-style",
+    });
+    // 入力イベント
+    editor.onDidChangeModelContent((event) => {
+
+        //ドキュメント、更新日更新（表示：ドキュメント、ファイル名、更新日、パス）
+        try{
+            switch(langKbn){
+                case 1 :{
+                    mainData[currentToolID].html=editor.getValue();
+                    break;
+                }
+                case 2 :{
+                    mainData[currentToolID].css=editor.getValue();
+                    break;
+                }
+                case 3 :{
+                    mainData[currentToolID].js=editor.getValue();
+                    break;
+                }
+            }
+        }catch(error){}
+
+        finally{
+            mainData[currentToolID].updateAt=getCurrentDate();
+            savaStrage();
+        }
+
+//         //空白ならメモ復活 ※戻せなくなる
+//         if(editor.getValue().trim() == ""){
+//             if(langKbn == 1){
+//                 editor.setValue(`<!--htmlタグの中身を記述--!>
+// `);
+//             }
+//         }
+    });
+    
+});
+
+
+//言語切替ボタン
+var langKbn = 1;//1:html 2:css 3:js
+function changeLang(value){//"pre" or "next"
+    switch(value){
+        case "pre":{//前へ
+            langKbn--;
+            langKbn = langKbn==0 ? 3 : langKbn;
+            break;
+        }
+        case "next":{//次へ
+            langKbn++;
+            langKbn = langKbn==4 ? 1 : langKbn;
+            break;
+        }
+    }
+
+    switch(langKbn){
+        case 1:{//html
+            language_lbl.textContent = "html";
+            // language_lbl.style.color = "orange";
+            monacoChange("html");
+            window.editor.setValue(mainData[currentToolID].html);
+            break;
+        }
+        case 2:{//css
+            language_lbl.textContent = "css";
+            // language_lbl.style.color = "aqua";
+            monacoChange("css");
+            window.editor.setValue(mainData[currentToolID].css);
+            break;
+        }
+        case 3:{//js
+            language_lbl.textContent = "js";
+            // language_lbl.style.color = "yellow";
+            monacoChange("javascript");
+            window.editor.setValue(mainData[currentToolID].js);
+            break;
+        }
+    }
+    setExTag();
+    window.editor.focus();
+}
+
+
+//モナコ言語切替
+function monacoChange(lang) {
+    if (editor.getModel()) {
+        monaco.editor.setModelLanguage(editor.getModel(), lang);
+    }
+}
+
+//電源
+var powerFlg = false;
+
+//電源ボタン
+function setPower(){
+    switch(powerFlg){
+
+        case true:{  //  →off
+            powerFlg = false;
+            powerButton.classList.remove('powerOn');
+            exeTool("off");
+            break;
+        }
+        case false:{  //  →on
+            powerFlg = true;
+            powerButton.classList.add('powerOn');
+            exeTool("on");
+            break;
+        }
+    }
+}
+
+
+//ツールのソース
+var toolsrc = "";
+
+//ツール実行
+function exeTool(kbn){// on or off
+
+    switch(kbn){
+        case "on":{ // → on
+            //iframe表示
+            iframeContainer.hidden = false;
+            setToolSrc();
+            const doc = toolframe.contentWindow.document;
+            doc.open();
+            doc.write(toolsrc);
+            doc.close();
+            break;
+        }
+        case "off":{ // → off
+            //iframe非表示
+            iframeContainer.hidden = true;
+            // const doc = toolframe.contentWindow.document;
+            // doc.open();
+            // doc.write("");
+            // doc.close();
+            break;
+        }
+    }
+}
+
+// //ツールソースをセット
+// function setToolSrc(){
+//     toolsrc = `
+// <!DOCTYPE html>
+// <html>
+// <head>
+//     <meta charset='UTF-8'>
+//     <style>
+//         ${mainData[currentToolID].css}
+//     </style>
+//     <script>
+//         document.addEventListener('DOMContentLoaded', () => {
+//             ${ mainData[currentToolID].js }
+//         });
+//     </script>
+// </head>
+// <body>
+//     ${ mainData[currentToolID].html }
+// </body>
+// </html>
+// `;
+// }
+
+//ツールソースをセット
+function setToolSrc(){
+    toolsrc = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #fff;
+        }
+        ${mainData[currentToolID].css}
+    </style>
+</head>
+<body>
+    ${mainData[currentToolID].html}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            ${mainData[currentToolID].js}
+        });
+    </script>
+</body>
+</html>
+`;
+
+    //htmlのみで実行
+    toolsrc = htmlOnlyCheck.checked ? mainData[currentToolID].html : toolsrc;
+}
+
+
+
+// 説明タグセット
+function setExTag(){
+    switch(langKbn){
+        case 1:{
+            exTag_s.textContent = `<body>`;
+            exTag_e.textContent = `</body>`;
+            exTag_s.style.color = "gray";
+            exTag_e.style.color = "gray";
+            break;
+        }
+        case 2:{
+            exTag_s.textContent = `<style>`;
+            exTag_e.textContent = `</style>`;
+            exTag_s.style.color = "gray";
+            exTag_e.style.color = "gray";
+            break;
+        }
+        case 3:{
+            exTag_s.textContent = `document.addEventListener('DOMContentLoaded', () => {`;
+            exTag_e.textContent = `});`;
+            exTag_s.style.color = "gray";
+            exTag_e.style.color = "gray";
+            break;
+        }
+    }
+}
+
+
+
+//htmlのみで実行
+function htmlOnly(){
+    switch(htmlOnlyCheck.checked){
+        case true:{//チェックあり
+            exTag_s.hidden=true;
+            exTag_e.hidden=true;
+            mainData[currentToolID].htmlOnly=true;
+            break;
+        }
+        case false:{//チェックなし
+            exTag_s.hidden=false;
+            exTag_e.hidden=false;
+            mainData[currentToolID].htmlOnly=false;
+            break;
+        }
+    }
+}
+
+//yyyy-mm-dd-hh-mm-ss
+function getCurrentDateTime() {
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0'); // 月（0始まりなので+1）
+    const dd = String(now.getDate()).padStart(2, '0');
+    const hh = String(now.getHours()).padStart(2, '0');
+    const min = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+
+    return `${yyyy}_${mm}_${dd}_${hh}_${min}_${ss}`;
+}
+
+// JSONファイルのダウンロード
+function downloadJSON() {
+    console.log("mainData before download:", mainData); // デバッグ用
+    if (!mainData || typeof mainData !== "object") {
+        alert("エクスポートするデータがありません。");
+        return;
+    }
+
+    const dataStr = JSON.stringify(mainData, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `document_kun(${getCurrentDateTime()}).json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+
+// JSONファイルドロップ → mainData に格納（イベントリスナー）
+document.addEventListener('drop', function(event) {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+
+    // ファイルがJSON形式であるか確認
+    if (!file || !file.name.endsWith('.json') || file.type !== "application/json") {
+        alert("JSONファイルをドロップしてください。");
+        return;
+    }
+
+    if(!confirm("全データが上書きされます。続行しますか？"))return;
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        try {
+            mainData = JSON.parse(event.target.result);
+            savaStrage();
+            roadStrage();
+            constructAll();
+        } catch (error) {
+            alert("JSONの解析に失敗しました。正しいフォーマットのファイルを使用してください。");
+            console.error("JSON Parse Error:", error);
+        }
+    };
+    reader.readAsText(file);
+    window.location.reload();
+});
+
+
+
+
+
