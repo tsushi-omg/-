@@ -1330,6 +1330,7 @@ function startEventListen(){
             if(fileNameText.value.indexOf(">") != -1){
                 alert(" > は使用できません。");
                 fileNameText.focus();
+                fileNameText.value = "";
                 return;
             }
             //tool or file
