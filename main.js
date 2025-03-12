@@ -2139,6 +2139,14 @@ function reflectExcelData(){
 //クリックイベント
 function cellClick(cell){//dom
     currentCell= cell;
+    //入力テキストの末尾にカーソルを移動
+    const range = document.createRange();
+    const sel = window.getSelection();
+    range.selectNodeContents(cell);
+    range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
+    cell.focus();
 }
 
 //カラーパレット
@@ -2153,29 +2161,92 @@ function setFontColor(color){
     mainData[currentExcelID]["cellData"][currentCell.id].fontColor=color;
 }
 
-// document.addEventListener('keydown', function(event) {
-//     // 矢印キーでセル移動
-//     if (currentCell) {
+// shift矢印キー、Enterでセル移動
+document.addEventListener('keydown', function(event) {
+    if (editingExcel) {
 
-//         switch (event.key) {
-//             case "ArrowUp":
-//                 try{
-//                     document.getElementById(currentCell.id).focus;
-//                 }catch(error){}
-//                 break;
+        switch (event.key) {
+            case "ArrowUp"://-1
+                try{
+                    document.getElementById(`${currentCell.id.split("-")[0]}-${Number(currentCell.id.split("-")[1])-1}`).focus();
+                    currentCell = document.getElementById(`${currentCell.id.split("-")[0]}-${Number(currentCell.id.split("-")[1])-1}`);
+                    //入力テキストの末尾にカーソルを移動
+                    const range = document.createRange();
+                    const sel = window.getSelection();
+                    range.selectNodeContents(currentCell);
+                    range.collapse(false);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                    currentCell.focus();
+                }catch(error){}
+                break;
 
-//             case "ArrowDown":
-//                 break;
+            case "ArrowDown"://+1
+                try{
+                    document.getElementById(`${currentCell.id.split("-")[0]}-${Number(currentCell.id.split("-")[1])+1}`).focus();
+                    currentCell = document.getElementById(`${currentCell.id.split("-")[0]}-${Number(currentCell.id.split("-")[1])+1}`);
+                    //入力テキストの末尾にカーソルを移動
+                    const range = document.createRange();
+                    const sel = window.getSelection();
+                    range.selectNodeContents(currentCell);
+                    range.collapse(false);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                    currentCell.focus();
+                }catch(error){}
+                break;
 
-//             case "ArrowLeft":
-//                 break;
+            case "Enter"://+1
+                try{
+                    document.getElementById(`${currentCell.id.split("-")[0]}-${Number(currentCell.id.split("-")[1])+1}`).focus();
+                    currentCell = document.getElementById(`${currentCell.id.split("-")[0]}-${Number(currentCell.id.split("-")[1])+1}`);
+                    event.preventDefault();
+                    //入力テキストの末尾にカーソルを移動
+                    const range = document.createRange();
+                    const sel = window.getSelection();
+                    range.selectNodeContents(currentCell);
+                    range.collapse(false);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                    currentCell.focus();
+                }catch(error){}
+                break;
 
-//             case "ArrowRight":
-//                 break;
-//         }
+            case "ArrowLeft"://-alpha
+                try{
+                    if(!event.shiftKey)return;
+                    document.getElementById(`${alphaList[alphaList.indexOf(currentCell.id.split("-")[0])-1]}-${currentCell.id.split("-")[1]}`).focus();
+                    currentCell = document.getElementById(`${alphaList[alphaList.indexOf(currentCell.id.split("-")[0])-1]}-${currentCell.id.split("-")[1]}`);
+                    //入力テキストの末尾にカーソルを移動
+                    const range = document.createRange();
+                    const sel = window.getSelection();
+                    range.selectNodeContents(currentCell);
+                    range.collapse(false);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                    currentCell.focus();
+                }catch(error){}
+                break;
+
+            case "ArrowRight"://+alpha
+                try{
+                    if(!event.shiftKey)return;
+                    document.getElementById(`${alphaList[alphaList.indexOf(currentCell.id.split("-")[0])+1]}-${currentCell.id.split("-")[1]}`).focus();
+                    currentCell = document.getElementById(`${alphaList[alphaList.indexOf(currentCell.id.split("-")[0])+1]}-${currentCell.id.split("-")[1]}`);
+                    //入力テキストの末尾にカーソルを移動
+                    const range = document.createRange();
+                    const sel = window.getSelection();
+                    range.selectNodeContents(currentCell);
+                    range.collapse(false);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                    currentCell.focus();
+                }catch(error){}
+                break;
+        }
         
-//     }
-// })
+    }
+})
 
 //入力イベント（json同期）
 function cellInput(cell){

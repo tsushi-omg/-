@@ -562,7 +562,7 @@ body {
 } */
 
 .cell::selection {
-    background-color: #208848;
+    background-color: #53a1c5;
     color: white;
 }
   
