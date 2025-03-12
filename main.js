@@ -41,6 +41,9 @@ var  exTag_s;
 var  exTag_e;
 var htmlOnlyCheck;
 
+
+var editingExcel = false;
+
 // 要素import
 function hensu(){
     newFolderButton = document.getElementById('newFolderButton');
@@ -601,6 +604,7 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                 if(isConstruct)file.id=constructorID;
                 //クリックイベント
                 file.addEventListener('click',function(event){
+                    editingExcel = false;
                     //操作中要素に設定
                     currentElementID=file.id;
                     currentFileID=file.id;
@@ -780,6 +784,7 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
             if(isConstruct)tool.id=constructorID;
             //クリックイベント
             tool.addEventListener('click',function(event){
+                editingExcel = false;
                 //操作中要素に設定
                 currentElementID=tool.id;
                 currentToolID=tool.id;
@@ -976,6 +981,7 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
             if(isConstruct)excel.id=constructorID;
             //クリックイベント
             excel.addEventListener('click',function(event){
+                editingExcel = true;
                 //操作中要素に設定
                 currentElementID=excel.id;
                 currentExcelID=excel.id;
@@ -2139,7 +2145,12 @@ function cellClick(cell){//dom
 function setBG(color){
     currentCell.style.backgroundColor = color;
     mainData[currentExcelID]["cellData"][currentCell.id].BGcolor=color;
-    //savaStrage();
+}
+
+//文字色
+function setFontColor(color){
+    currentCell.style.color = color;
+    mainData[currentExcelID]["cellData"][currentCell.id].fontColor=color;
 }
 
 // document.addEventListener('keydown', function(event) {
@@ -2172,3 +2183,35 @@ function cellInput(cell){
         //savaStrage();
 }
 
+// 太字
+document.addEventListener('keydown', function(event) {
+    if (editingExcel) {
+        if (event.ctrlKey && (event.key === "b" || event.key === "B")) {
+            event.preventDefault();
+            currentCell.style.fontWeight = currentCell.style.fontWeight === "bold" ? "normal" : "bold";
+            mainData[currentExcelID]["cellData"][currentCell.id].bold = currentCell.style.fontWeight === "bold" ? true : false;
+        }
+    }
+})
+
+// 斜体
+document.addEventListener('keydown', function(event) {
+    if (editingExcel) {
+        if (event.ctrlKey && (event.key === "i" || event.key === "I")) {
+            event.preventDefault();
+            currentCell.style.fontStyle = currentCell.style.fontStyle === "italic" ? "normal" : "italic";
+            mainData[currentExcelID]["cellData"][currentCell.id].italic = currentCell.style.fontStyle === "italic" ? true : false;
+        }
+    }
+})
+
+// 下線
+document.addEventListener('keydown', function(event) {
+    if (editingExcel) {
+        if (event.ctrlKey && (event.key === "u" || event.key === "U")) {
+            event.preventDefault();
+            currentCell.style.textDecoration = currentCell.style.textDecoration === "underline" ? "none" : "underline";
+            mainData[currentExcelID]["cellData"][currentCell.id].underline = currentCell.style.textDecoration === "underline" ? true : false;
+        }
+    }
+})
