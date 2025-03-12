@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/monokai-sublime.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
     <link href="main.css" rel="stylesheet">
-    <script src="main.js"></script>
 </head>
 <body>
     <!-- フォルダディレクトリ -->
@@ -92,7 +93,7 @@
         <div class="absolute" style="left: 2%; top: 2%; width: 90%;">
         <!-- ファイル名表示 -->
         <!-- <input type="text" class="textbox2 absolute" style="color: blue; border-color: black; width: 20%; font-weight: bold; z-index: 60;" id="fileNameText"> -->
-        <input type="text" class="textbox2 absolute" style="color: white; border-color: black; width: 20%; font-weight: bold; z-index: 60;" id="fileNameText" autocomplete="off">
+        <input type="text" class="textbox2 absolute" style="color: rgb(159, 220, 255); border-color: black; width: 20%; font-weight: bold; z-index: 60;" id="fileNameText" autocomplete="off">
         <svg class="button absolute" id="renameButton" style="z-index: 60; left: 21%;" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="rgba(255, 255, 255, 0.7)"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>
         <!-- パス表示 -->
         <!-- <label class="absolute" style="left: 26%; color: rgba(0, 0, 0, 0.5); z-index: 60;" id="pathLabel"></label> -->
@@ -102,7 +103,7 @@
         </div>
 
         <!-- フッター領域 -->
-        <div class="absolute" style="left: 80%; top: 95%; width: 20%; background-color: rgb(156, 156, 156); z-index: 60;">
+        <div class="absolute" style="left: 80%; top: 95%; width: 20%; background-color: rgb(132, 144, 151); z-index: 60;">
             <label style="color: black;">最終更新日：</label><label id="updateLabel"></label>
         </div>
     </div>
@@ -125,6 +126,50 @@
      <div id="heighlightParent" class="absolute" hidden>
     <pre id="heighligthArea" class="js"></pre></div>
 
+    <!-- Excel -->
+    <div id="excelArea" class="absolute" hidden>
+        <!-- ボタンヘッダー -->
+        <div id="exlButtonHeader" style="font-family: 'Roboto', sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+            <div style="display: flex; justify-content: flex-start; align-items: center; background-color: #2C313A; padding: 15px; ">
+                <!-- <button class = "excelButton" style="background-color: transparent; border: none; color: #ccc; font-size: 16px; margin-right: 20px; padding: 10px 15px; cursor: pointer; position: relative; transition: color 0.3s ease;">
+                    <i class="fa fa-bold" style="margin-right: 5px;"></i> 
+                </button>
+                <button class = "excelButton" style="background-color: transparent; border: none; color: #ccc; font-size: 16px; margin-right: 20px; padding: 10px 15px; cursor: pointer; position: relative; transition: color 0.3s ease;">
+                    <i class="fa fa-italic" style="margin-right: 5px;"></i> 
+                </button>
+                <button class = "excelButton" class = "excelButton" style="background-color: transparent; border: none; color: #ccc; font-size: 16px; margin-right: 20px; padding: 10px 15px; cursor: pointer; position: relative; transition: color 0.3s ease;">
+                    <i class="fa fa-underline" style="margin-right: 5px;"></i> 
+                </button> -->
+                <button class = "excelButton" style="background-color: transparent; border: none; color: #ccc; font-size: 16px; margin-right: 20px; padding: 10px 15px; cursor: pointer; position: relative; transition: color 0.3s ease;">
+                    <i class="fa fa-paint-brush" style="margin-right: 5px;"></i> 
+                    <div style="display: none; position: absolute; top: 40px; background-color: #fff; padding: 10px; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+                        <input type="color" style="border: none; padding: 5px; cursor: pointer;">
+                    </div>
+                </button>
+                <!-- 背景色プリセット -->
+                <button class="colorPreButton" style="background-color: #d8d8d8;" onclick="setBG('#d8d8d8')"></button>
+                <button class="colorPreButton" style="background-color: #a1b5c9;" onclick="setBG('#a1b5c9')"></button>
+                <button class="colorPreButton" style="background-color: #c5b7a5;" onclick="setBG('#c5b7a5')"></button>
+                <button class="colorPreButton" style="background-color: #a3b2a4;" onclick="setBG('#a3b2a4')"></button>
 
+                <button class = "excelButton" style="background-color: transparent; border: none; color: #ccc; font-size: 16px; padding: 10px 15px; cursor: pointer; position: relative; transition: color 0.3s ease;">
+                    <i class="fa fa-font" style="margin-right: 5px;"></i> 
+                </button>
+            </div>
+        </div>
+        <div id="sheetArea" class="absolute">
+            <table>
+                <thead id="excelHeader"></thead>
+                <tbody id="excelBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ログ -->
+     <!-- <textarea id="logArea"></textarea> -->
+
+
+
+    <script src="main.js"></script>
 </body>
 </html>

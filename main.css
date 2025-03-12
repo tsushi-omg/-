@@ -38,7 +38,8 @@ body {
     top: 0%;
     width: 31vw;
     height: 100vh;
-    background-color: rgba(255, 255, 255, 0.2);
+    /* background-color: rgba(255, 255, 255, 0.2); */
+    background-color: #2C313A;
     position: absolute;
 }
 
@@ -73,8 +74,8 @@ body {
     border-top: none;
     border-right: none;
     border-left: none;
-    border-color: rgb(236, 236, 236);
-    color: white;
+    border-color: rgb(162, 187, 194);
+    color: #D8E7FF;
     outline: none !important;
 }
 
@@ -113,7 +114,7 @@ body {
 /* フォルダアイコン */
 
 .isFolder{
-    color: white;
+    color: #D8E7FF;
     background-color: transparent;
     outline: none !important;
     border: none;
@@ -127,7 +128,7 @@ body {
 
 /* ファイルアイコン */
 .isFile{
-    color: white;
+    color: #D8E7FF;
     background-color: transparent;
     outline: none !important;
     border: none;
@@ -139,13 +140,25 @@ body {
 
 /* ツールアイコン */
 .isTool{
-    color: white;
+    color: #D8E7FF;
     background-color: transparent;
     outline: none !important;
     border: none;
 }
 
 .isTool:hover{
+    text-decoration: underline;
+}
+
+/* エクセルアイコン */
+.isExcel{
+    color: #D8E7FF;
+    background-color: transparent;
+    outline: none !important;
+    border: none;
+}
+
+.isExcel:hover{
     text-decoration: underline;
 }
 
@@ -160,15 +173,16 @@ body {
 
 .buttonChild{
     border: none;
-    background-color: rgba(133, 133, 133, 0.5);
+    background-color: rgba(109, 130, 136, 0.5);
     outline: none !important;
     user-select: none !important;
     border-radius: 10px;
+    color: #D8E7FF;
 }
 
 /* パスラベル */
 .isPathLabel{
-    color: rgb(175, 175, 175);
+    color: rgb(156, 167, 175);
     /* text-decoration: underline; */
 }
 
@@ -181,7 +195,9 @@ body {
     width: 69vw;
     height: 100vh;
     /* background-color: rgb(255, 255, 255,0.7); */
-    background-color: #202020;
+    /* background-color: #202020; */
+    background-color: #1E2A38; /* ダークブルー */
+    border-left: 2px solid #2B3B4B; /* 境界線 */
 }
 
 #memoTexrarea{
@@ -194,7 +210,8 @@ body {
     outline: none;
     resize: none;
     /* color: black; */
-    color: rgb(230, 230, 230);
+    /* color: rgb(230, 230, 230); */
+    color: #D8E7FF;
     border: none;
 }
 
@@ -442,3 +459,169 @@ body {
     z-index: 100;
     color: white !important;
 }
+
+.excelHeader{
+    background-color: #2C313A;
+    color: #D8E7FF;
+    min-width: 60px;
+    width: auto;
+    height: auto;
+    user-select: none;
+    text-align: center;
+    cursor: pointer;
+    border-color: #888;
+}
+
+.excelHeader:hover{
+    background-color: #2b2b2b;
+}
+
+#excelArea{
+    position: absolute;
+    background-color: #d0d3d6;
+    color: white !important;
+    left: 32.3%;
+    top: 7%;
+    width: 66.5vw;
+    height: 85.5vh;
+    border-radius: 10px;
+}
+
+#exlButtonHeader{
+    background-color: #3f3f3f;
+    color: white;
+    user-select: none;
+    outline: none;
+    cursor: pointer;
+    border-color: #888;
+    box-shadow: #1b272b 5px 5px 5px;
+}
+
+#sheetArea{
+    position: absolute;
+    background-color: #c6c9cc;
+    color: white !important;
+    top: 9%;
+    width: 66.5vw;
+    height: 80.5vh;
+    overflow-x: auto;
+    overflow-y: auto;
+    white-space: nowrap; /* 横スクロール対応 */
+    border-radius: 5px;
+}
+
+#excelArea table{
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.excelNum{
+    background-color: #76828f;
+    color: #eaf2ff;
+    min-width: 60px;
+    min-height: 20px;
+    width: auto;
+    height: auto;
+    user-select: none;
+    text-align: center;
+    cursor: pointer;
+    border-color: #888;
+}
+
+.excelNum:hover{
+    background-color: #2b2b2b;
+}
+
+.cell{
+    background-color: #d8d8d8;
+    color: white;
+    max-width: 60px;
+    /* width: auto;
+    height: auto; */
+    user-select: none;
+    text-align: left;
+    cursor: pointer;
+    border-color: #888;
+    outline: none;
+    color: black;
+    border: 1px solid transparent;
+    
+    white-space: nowrap; /* 折り返しなし */
+    /* overflow: auto; */
+    overflow: visible;
+}
+
+.cell:focus {
+    outline: none;
+    border: 1px solid #4DA6FF;
+    transition: background-color 0.1s ease-in-out;
+}
+
+/* .cell:hover{
+    background-color: #b9bcc0;
+} */
+
+.cell::selection {
+    background-color: #208848;
+    color: white;
+}
+  
+.excelButton{
+    user-select: none;
+    outline: none !important;
+
+
+}
+.excelButton:hover{
+    background-color: #929292;
+}
+
+.colorPreButton{
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    color: white;
+    font-size: 14px;
+    margin: 5px;
+    cursor: pointer;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+    transition: 0.3s;
+    user-select: none;
+    outline: none !important;
+}
+
+.colorPreButton:hover {
+    transform: scale(1.1);
+    /* background: linear-gradient(45deg, #f39c12, #e74c3c); */
+  }
+
+
+
+#logArea{
+    width: 100%;
+    height: 250px;
+    background: rgba(15, 15, 15, 0.8);
+    border: none;
+    color: #e0e0e0;
+    font-family: monospace;
+    padding: 10px;
+    resize: none;
+    outline: none;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    position: absolute;
+    top: 70%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

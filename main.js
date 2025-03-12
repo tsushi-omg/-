@@ -2,10 +2,10 @@
 // 初期実行
 document.addEventListener('DOMContentLoaded',()=>{
     hensu();
-    roadStrage();
+    // roadStrage();
     setSavedID();
     startEventListen();
-    constructAll();
+    // constructAll();
     createReadme();
 
 })
@@ -78,7 +78,7 @@ function hensu(){
 var readText = `------------------------------------------------------------------------------------------------------------------------------------------------------
 コマンド
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-・【ctrl + shift + K】管理くんへ移動
+・【ctrl + S】ダウンロード　※ローカルストレージ廃止
 ・【ctrl + shift + G】選択中の文字列をGoogle検索
 ・【ctrl + shift + Enter】テキストハイライト　※view専用
 ・【ctrl + ;】区切り線
@@ -264,7 +264,7 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                     }
                     div.remove();//※自分から消すと子要素が参照できなくなる
                     mainData[folder.id].type="deleted";
-                    savaStrage();//--ok!
+                    //savaStrage();//--ok!
                 });
                 div.appendChild(deleteButton);
 
@@ -397,6 +397,18 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                     })
                     div2.appendChild(newToolButtonChild);
 
+                    //new excel　※初期非表示
+                    const newExcelButtonChild = document.createElement('button');
+                    newExcelButtonChild.classList.add('button');
+                    newExcelButtonChild.classList.add('buttonChild');
+                    newExcelButtonChild.classList.add('ml-2');//隙間
+                    newExcelButtonChild.textContent="📊";
+                    newExcelButtonChild.hidden=true;
+                    newExcelButtonChild.addEventListener('click',function(event){
+                        createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"excel",emptyLabel,folder,idParam,false,false,"","",false);
+                    })
+                    div2.appendChild(newExcelButtonChild);
+
                     //close create　※初期非表示
                     const closeButtonChild = document.createElement('button');
                     closeButtonChild.classList.add('button');
@@ -489,6 +501,10 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                 for(let i = 0; i < toolArray.length; i++){
                     createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"tool",emptyLabel,folder,idParam,false,true,toolArray[i].id,toolArray[i].name,false, toolArray[i].html, toolArray[i].css, toolArray[i].js);
                 }
+                const excelArray = Object.values(mainData).filter(item => (item.parentID == constructorID) && (item.type=="エクセル"));
+                for(let i = 0; i < excelArray.length; i++){
+                    createFolderFunction(div3,childTextbox,childTextbox.value,currentPath,"excel",emptyLabel,folder,idParam,false,true,excelArray[i].id,excelArray[i].name,false);
+                }
             }
 
             if(isConstruct && !isTop){
@@ -496,7 +512,7 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
             }
 
             //変更を保存
-            savaStrage();
+            //savaStrage();
 
             //フォルダ名ボックスクリア
             nameTextbox.value="";
@@ -588,6 +604,8 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                     //操作中要素に設定
                     currentElementID=file.id;
                     currentFileID=file.id;
+                    //エクセル表示
+                    excelArea.hidden=true;
                     //モナコ切替
                     monacoWin.hidden = true;
                     memoTexrarea.hidden = false;
@@ -646,7 +664,7 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                     //画面から削除
                     div.remove();//※自分から消すと子要素が参照できなくなる
                     mainData[file.id].type="deleted";
-                    savaStrage();//--ok!
+                    //savaStrage();//--ok!
                 });
                 div.appendChild(deleteButton);
 
@@ -703,7 +721,7 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
             }
 
             //変更を保存
-            savaStrage();
+            //savaStrage();
     
             //階層段
             div.style.marginLeft="20px";
@@ -765,6 +783,8 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                 //操作中要素に設定
                 currentElementID=tool.id;
                 currentToolID=tool.id;
+                //エクセル表示
+                excelArea.hidden=true;
                 //モナコ切替
                 monacoWin.hidden = false;
                 memoTexrarea.hidden = true;
@@ -837,7 +857,7 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
                 //画面から削除
                 div.remove();//※自分から消すと子要素が参照できなくなる
                 mainData[tool.id].type="deleted";
-                savaStrage();//--ok!
+                //savaStrage();//--ok!
             });
             div.appendChild(deleteButton);
 
@@ -897,7 +917,7 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
         }
 
         //変更を保存
-        savaStrage();
+        //savaStrage();
 
         //階層段
         div.style.marginLeft="20px";
@@ -911,9 +931,171 @@ function createFolderFunction(parentDiv,nameTextbox,value,path,type,emptyLabelPa
         break;
 }
 
-    }
-    
+    case "excel":{//************************************************************************************************************ */
 
+        var excelName = value;
+        if(isConstruct)excelName=constructorName;
+
+        if(!isConstruct && !isReadMe){
+            //未入力チェック
+            if(excelName==""){
+                alert("グリッド名を入力してください。");
+                nameTextbox.focus();
+                return;
+            }
+            // > 使用不可
+            if(excelName.indexOf(">") != -1){
+                alert(" > は使用できません。");
+                nameTextbox.focus();
+                return;
+            }
+        }
+
+        //空ですラベル非表示
+        emptyLabelParam.hidden=true;
+
+        //一括選択時
+        if(excelName.indexOf(",") != -1){
+            let array = splitComma(excelName);
+            for(let i = 0; i < array.length; i++){
+                createFolderFunction(parentDiv,nameTextbox,array[i],path,type,emptyLabelParam,parentFolder,parentIDPath,isTop,isConstruct,"","",false);
+            }
+            return;
+        }
+
+        //親div生成
+        const div = document.createElement('div');
+        div.style.width='100%';
+        parentDiv.appendChild(div);
+
+            //グリッド名　ボタン生成
+            const excel = document.createElement('button');
+            excel.textContent=`📊${excelName}`;
+            excel.classList.add('isExcel');
+            excel.id=randomID();
+            if(isConstruct)excel.id=constructorID;
+            //クリックイベント
+            excel.addEventListener('click',function(event){
+                //操作中要素に設定
+                currentElementID=excel.id;
+                currentExcelID=excel.id;
+                //エクセル表示
+                excelArea.hidden=false;
+                reflectExcelData();
+                //ドキュメントエリアに反映（ドキュメント、ファイル名、更新日、パス）
+                fileNameText.value=mainData[currentExcelID].name;
+                updateLabel.textContent=mainData[currentExcelID].updateAt;
+                pathLabel.textContent=mainData[currentExcelID].path;
+                //モナコ切替
+                monacoWin.hidden = true;
+                // memoTexrarea.hidden = false;
+                iframeContainer.hidden = true;
+                //選択用クラス除去
+                for(let element of Array.from(document.getElementsByClassName('openFile'))){
+                    element.classList.remove('openFile');
+                }
+                //選択用クラス自分に付与
+                excel.classList.add('openFile');
+                //親フォルダにクラス付与
+                parentFolder.classList.add('openFile');
+                //ハイライト非表示
+                heighlightParent.hidden=true;
+                pathLabel.classList.remove('pathHi');
+                fileNameText.classList.remove('boxHi');
+                renameButton.classList.remove('buttonHi');
+
+                //フォーカス
+                window.editor.focus();
+
+            })
+
+            //右クリックイベント（新規作成）
+            excel.addEventListener('contextmenu',function(event){
+                // //デフォルトの右クリックイベントを無効
+                event.preventDefault();
+                excel.style.opacity="0.3";
+                deleteButton.hidden=false;
+                deleteLayer.hidden=false;
+            })
+
+            //削除ボタン
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent="⚠削除";
+            deleteButton.style.position="absolute";
+            deleteButton.style.left="15%";
+            deleteButton.hidden=true;
+            deleteButton.style.zIndex=120;
+            deleteButton.classList.add('deleteButton');
+            deleteButton.style.backgroundColor="rgba(219, 101, 101, 0.8)";
+            deleteButton.style.color="white";
+            deleteButton.addEventListener('click',function(event){
+                //画面から削除
+                div.remove();//※自分から消すと子要素が参照できなくなる
+                mainData[excel.id].type="deleted";
+                //savaStrage();//--ok!
+            });
+            div.appendChild(deleteButton);
+
+            //削除時用レイヤー
+            const deleteLayer = document.createElement('div');
+            deleteLayer.style.backgroundColor="transparent";
+            deleteLayer.style.position="absolute";
+            deleteLayer.style.width="100vw";
+            deleteLayer.style.height="100vh";
+            deleteLayer.style.left="0%";
+            deleteLayer.style.top="0%";
+            deleteLayer.style.zIndex=100;
+            deleteLayer.hidden=true;
+            deleteLayer.addEventListener('click',function(event){
+                deleteButton.hidden=true;
+                deleteLayer.hidden=true;
+                excel.style.opacity="1.0";
+            });
+            document.body.appendChild(deleteLayer);
+
+
+            div.appendChild(excel);
+
+        //親要素idの継承
+        const idParam = parentIDPath=="" ? excel.id : `${parentIDPath},${excel.id}`;
+
+        //再描画の場合はスキップ
+        if(!isConstruct){
+            //ファイルデータ作成
+            mainData[excel.id]={
+                id:excel.id,
+                type:"エクセル",
+                name:excelName,
+                parentID:parentFolder.id,
+                parentIDPath:idParam,
+                path:path,
+                updateAt:getCurrentDate(),
+                cellData:{}
+            };
+            //エクセルデータ作成
+            createExcelData(excel.id);
+        }
+
+        if(isConstruct){
+            div.hidden=true;
+        }
+
+        //変更を保存
+        //savaStrage();
+
+        //階層段
+        div.style.marginLeft="20px";
+
+        //ファイル名ボックスクリア
+        nameTextbox.value="";
+
+        //フォーカス
+        nameTextbox.focus();
+
+        break;
+
+    }
+}
 }
 
 
@@ -928,29 +1110,30 @@ var currentElementID;//file / folder
 var currentFolderID;// folder
 var currentFileID;// file
 var currentToolID;// tool
+var currentExcelID;// excel
 
 var currentParentFolderID;//子要素作成ボタン押下時に親フォルダを参照する
 
 
 //ローカルストレージ*****************************************************************
 //保存
-function savaStrage(){
-    try{
-    if(mainData == null)return;
-    localStorage.setItem("mainData",JSON.stringify(mainData));
-    dataryoiki.value=mainData;
-}catch(error){}
-}
+// function //savaStrage(){
+//     try{
+//     if(mainData == null)return;
+//     localStorage.setItem("mainData",JSON.stringify(mainData));
+//     dataryoiki.value=mainData;
+// }catch(error){}
+// }
 
-//読込
-function roadStrage(){
-    try{
-        const storedData = localStorage.getItem("mainData");
-        if (storedData) {
-            mainData = JSON.parse(storedData);
-        }
-    }catch(error){}
-}
+// //読込
+// function roadStrage(){
+//     try{
+//         const storedData = localStorage.getItem("mainData");
+//         if (storedData) {
+//             mainData = JSON.parse(storedData);
+//         }
+//     }catch(error){}
+// }
 
 
 
@@ -998,7 +1181,7 @@ function startEventListen(){
         mainData[currentFileID].memo=memoTexrarea.value;
         mainData[currentFileID].updateAt=getCurrentDate();
         //変更を保存
-        savaStrage();
+        //savaStrage();
         }catch(error){}
     })
 
@@ -1007,7 +1190,7 @@ function startEventListen(){
     // });
     
     // dataryoiki.addEventListener('input',function(event){
-    //     savaStrage();
+    //     //savaStrage();
     // })
 
     //-----挿入
@@ -1025,7 +1208,7 @@ function startEventListen(){
             mainData[currentFileID].memo=memoTexrarea.value;
             mainData[currentFileID].updateAt=getCurrentDate();
             //変更を保存
-            savaStrage();
+            //savaStrage();
         }
     })
 
@@ -1063,7 +1246,7 @@ function startEventListen(){
             mainData[currentFileID].memo=memoTexrarea.value;
             mainData[currentFileID].updateAt=getCurrentDate();
             //変更を保存
-            savaStrage();
+            //savaStrage();
         }
     })
 
@@ -1314,7 +1497,7 @@ function startEventListen(){
     //         })
     //         box.addEventListener('input',function(event){
     //             mainData=box.value;
-    //             savaStrage();
+    //             //savaStrage();
     //             roadStrage();
     //             constructAll();
     //             box.remove();
@@ -1340,16 +1523,16 @@ function startEventListen(){
                     mainData[currentFileID].name=fileNameText.value;
                     document.getElementById(currentFileID).textContent=`📄${fileNameText.value}`;
                     //変更を保存
-                    savaStrage();
+                    //savaStrage();
                 }catch(error){}
             }
             if(document.getElementById(currentElementID).classList.contains('isTool')){
                 //ツール名変更 --ok
                 try{
                     mainData[currentToolID].name=fileNameText.value;
-                    document.getElementById(currentToolID).textContent=`🤖${fileNameText.value}`;
+                    document.getElementById(currentToolID).textContent=`🛠️${fileNameText.value}`;
                     //変更を保存
-                    savaStrage();
+                    //savaStrage();
                 }
                 catch(error){}
             }
@@ -1480,7 +1663,7 @@ require(["vs/editor/editor.main"], function () {
 
         finally{
             mainData[currentToolID].updateAt=getCurrentDate();
-            savaStrage();
+            //savaStrage();
         }
 
 //         //空白ならメモ復活 ※戻せなくなる
@@ -1757,19 +1940,235 @@ document.addEventListener('drop', function(event) {
     reader.onload = function(event) {
         try {
             mainData = JSON.parse(event.target.result);
-            savaStrage();
-            roadStrage();
+            //savaStrage();
+            // roadStrage();
             constructAll();
+            setSavedID();
         } catch (error) {
             alert("JSONの解析に失敗しました。正しいフォーマットのファイルを使用してください。");
             console.error("JSON Parse Error:", error);
         }
     };
     reader.readAsText(file);
-    window.location.reload();
+    // window.location.reload();
+});
+
+//終了時に確認
+window.addEventListener('beforeunload', function(event) {
+    event.preventDefault(); // デフォルト動作を防ぐ（必須）
+    event.returnValue = ""; // これを設定しないと動かない（固定メッセージ）
+});
+
+//ctrl + sでダウンロード
+document.addEventListener('keydown', function(event) {
+    if (event.ctrlKey && (event.key === 's' || event.key === 'S')) {
+        event.preventDefault();
+        downloadJSON();
+    }
 });
 
 
 
+//Excel追加（3.10）
+excelArea = document.getElementById('excelArea');
+excelHeader = document.getElementById('excelHeader');
+excelBody = document.getElementById('excelBody');
 
+//アクティブセル
+var currentCell;//dom
+
+//アルファベットリスト200（A～…AABなど）
+const alphaList = [
+    "A","B","C","D","E","F","G","H","I","J",
+    "K","L","M","N","O","P","Q","R","S","T",
+    "U","V","W","X","Y","Z",
+    "AA","AB","AC","AD","AE","AF","AG","AH","AI","AJ",
+    "AK","AL","AM","AN","AO","AP","AQ","AR","AS","AT",
+    "AU","AV","AW","AX","AY","AZ",
+    "BA","BB","BC","BD","BE","BF","BG","BH","BI","BJ",
+    "BK","BL","BM","BN","BO","BP","BQ","BR","BS","BT",
+    "BU","BV","BW","BX","BY","BZ",
+    "CA","CB","CC","CD","CE","CF","CG","CH","CI","CJ",
+    "CK","CL","CM","CN","CO","CP","CQ","CR","CS","CT",
+    "CU","CV","CW","CX","CY","CZ",
+    "DA","DB","DC","DD","DE","DF","DG","DH","DI","DJ",
+    "DK","DL","DM","DN","DO","DP","DQ","DR","DS","DT",
+    "DU","DV","DW","DX","DY","DZ",
+    "EA","EB","EC","ED","EE","EF","EG","EH","EI","EJ",
+    "EK","EL","EM","EN","EO","EP","EQ","ER","ES","ET",
+    "EU","EV","EW","EX","EY","EZ",
+    "FA","FB","FC","FD","FE","FF","FG","FH","FI","FJ",
+    "FK","FL","FM","FN","FO","FP","FQ","FR","FS","FT",
+    "FU","FV","FW","FX","FY","FZ",
+    "GA","GB","GC","GD","GE","GF","GG","GH","GI","GJ",
+    "GK","GL","GM","GN","GO","GP","GQ","GR","GS","GT",
+    "GU","GV","GW","GX","GY","GZ"
+];
+
+//初期実行
+createExcelSheet();
+
+//シート作成
+function createExcelSheet(){
+
+    for(let i = 0; i < 200; i++){
+
+        const tr = document.createElement('tr');
+        excelHeader.appendChild(tr);
+
+        switch(i){
+            case 0: { //１行目（ヘッダー行作成（アルファベット横列）ABCDEF...）
+                for(let j = 0; j < 200; j++){
+                    const td = document.createElement('td');
+                    tr.appendChild(td);
+                    const div = document.createElement('div');
+                    div.classList.add('excelHeader');
+                    div.textContent=j == 0 ? "　" : alphaList[j-1];
+                    // ヘッダー横列固定
+                    if (i == 0) {
+                        td.style.position = "sticky";
+                        td.style.top = "0";
+                        td.style.zIndex = "10";
+                    }
+
+                    // ヘッダー縦列固定
+                    if (j == 0) {
+                        td.style.position = "sticky";
+                        td.style.left = "0";
+                        td.style.zIndex = "20";
+                    }
+                    td.appendChild(div);
+                }
+                break;
+            }
+            default: { //２行目以降（データ行作成）
+                for(let j = 0; j < 200; j++){
+
+                    // 1,2,3,4,5...
+                    if (j == 0) {
+
+                        const td = document.createElement('td');
+                        tr.appendChild(td);
+                        const div = document.createElement('div');
+                        div.classList.add('excelNum');
+                        div.textContent= i;
+    
+                        // 行番号固定
+                        td.style.position = "sticky";
+                        td.style.left = "0";
+                        td.style.zIndex = "15";
+                        td.style.backgroundColor = "#f4f4f4";
+    
+                        td.appendChild(div);
+                        
+                    //セル
+                    }else{
+
+                        const td = document.createElement('td');
+                        tr.appendChild(td);
+                        const cell = document.createElement('div');
+                        cell.classList.add('cell');
+                        cell.textContent= "　";
+                        cell.contentEditable=true;
+                        cell.spellcheck=false;
+                        cell.id = `${alphaList[j-1]}-${i}`;//A-1,B-1,C-1...
+                        td.appendChild(cell);
+
+                        // イベント
+                        cell.addEventListener('click', function(event){
+                            cellClick(cell);
+                        })
+                        cell.addEventListener('input', function(event){
+                            cellInput(cell);
+                        })
+                        // cell.addEventListener('blur', function(event){
+                        //     currentCell = null;
+                        // })
+                    }
+                }
+                break;
+            }
+        }
+        
+    }
+}
+
+//セルデータ作成
+function createExcelData(idParam){
+    for(let i = 1; i < 200; i++){
+        for(let j = 1; j < 200; j++){
+            mainData[idParam]["cellData"][`${alphaList[j-1]}-${i}`]={
+                id: `${alphaList[j-1]}-${i}`,
+                value: "",
+                bold: false,//太字 no
+                italic: false,//斜体 no
+                underline: false,//下線 no
+                BGcolor: "#d8d8d8",//背景色　※デフォルト
+                fontColor: "black",//文字色 no
+            };
+        }
+    }
+    //savaStrage();
+}
+
+//データ反映
+function reflectExcelData(){
+    for(let i = 1; i < 200; i++){
+        for(let j = 1; j < 200; j++){
+
+            const cell = document.getElementById(`${alphaList[j-1]}-${i}`);
+
+            cell.textContent = mainData[currentExcelID]["cellData"][`${alphaList[j-1]}-${i}`].value;
+            cell.style.fontWeight = mainData[currentExcelID]["cellData"][`${alphaList[j-1]}-${i}`].bold ? "bold" : "normal";
+            cell.style.fontStyle = mainData[currentExcelID]["cellData"][`${alphaList[j-1]}-${i}`].italic ? "italic" : "normal";
+            cell.style.textDecoration = mainData[currentExcelID]["cellData"][`${alphaList[j-1]}-${i}`].underline ? "underline" : "none";
+            cell.style.backgroundColor = mainData[currentExcelID]["cellData"][`${alphaList[j-1]}-${i}`].BGcolor;
+            cell.style.color = mainData[currentExcelID]["cellData"][`${alphaList[j-1]}-${i}`].fontColor;
+            
+        }
+    }
+    //savaStrage();
+}
+
+//クリックイベント
+function cellClick(cell){//dom
+    currentCell= cell;
+}
+
+//カラーパレット
+function setBG(color){
+    currentCell.style.backgroundColor = color;
+    mainData[currentExcelID]["cellData"][currentCell.id].BGcolor=color;
+    //savaStrage();
+}
+
+// document.addEventListener('keydown', function(event) {
+//     // 矢印キーでセル移動
+//     if (currentCell) {
+
+//         switch (event.key) {
+//             case "ArrowUp":
+//                 try{
+//                     document.getElementById(currentCell.id).focus;
+//                 }catch(error){}
+//                 break;
+
+//             case "ArrowDown":
+//                 break;
+
+//             case "ArrowLeft":
+//                 break;
+
+//             case "ArrowRight":
+//                 break;
+//         }
+        
+//     }
+// })
+
+//入力イベント（json同期）
+function cellInput(cell){
+        mainData[currentExcelID]["cellData"][cell.id].value=cell.textContent;
+        //savaStrage();
+}
 
