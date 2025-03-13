@@ -2084,8 +2084,8 @@ function createExcelSheet(){
                         cell.addEventListener('click', function(event){
                             cellClick(cell);
                         })
-                        cell.addEventListener('input', function(event){
-                            cellInput(cell);
+                        cell.addEventListener('blur', function(event){
+                            cellBlur(cell);
                         })
                         // cell.addEventListener('blur', function(event){
                         //     currentCell = null;
@@ -2248,8 +2248,8 @@ document.addEventListener('keydown', function(event) {
     }
 })
 
-//入力イベント（json同期）
-function cellInput(cell){
+//ロストフォーカスイベント（json同期）
+function cellBlur(cell){
         mainData[currentExcelID]["cellData"][cell.id].value=cell.textContent;
         //savaStrage();
 }
@@ -2286,3 +2286,14 @@ document.addEventListener('keydown', function(event) {
         }
     }
 })
+
+
+
+
+
+
+
+
+
+
+
